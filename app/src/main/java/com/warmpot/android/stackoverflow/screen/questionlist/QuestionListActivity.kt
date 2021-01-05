@@ -1,10 +1,18 @@
 package com.warmpot.android.stackoverflow.screen.questionlist
 
 import android.os.Bundle
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.data.api.QuestionsApi
+import com.warmpot.android.stackoverflow.screen.utils.hide
+import com.warmpot.android.stackoverflow.screen.utils.nonSyncLazy
+import com.warmpot.android.stackoverflow.screen.utils.show
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,37 +23,60 @@ class QuestionListActivity : AppCompatActivity() {
         private const val BASE_URL = "http://api.stackexchange.com/2.2/"
     }
 
-    private val retrofit: Retrofit by lazy(LazyThreadSafetyMode.NONE) {
+    private val retrofit: Retrofit by nonSyncLazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
-    private val questionsApi: QuestionsApi by lazy(LazyThreadSafetyMode.NONE) {
+    private val questionsApi: QuestionsApi by nonSyncLazy {
         retrofit.create(QuestionsApi::class.java)
     }
+
+    private val questionListRcv: RecyclerView by nonSyncLazy { findViewById(R.id.questionListRcv) }
+    private val progressBar: ProgressBar by nonSyncLazy { findViewById(R.id.progressBar) }
+
+    private val questionListAdapter = QuestionListAdapter()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_list)
 
-        setupTitle()
+        updateTitle()
+        setupQuestionList()
     }
 
-    private fun setupTitle() {
-        title = getString(R.string.question_list_title, 0)
-    }
-
-    override fun onStart() {
-        super.onStart()
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
         fetchQuestionList()
     }
 
-    private fun fetchQuestionList() {
-        lifecycleScope.launch {
-            val questionListResponse = questionsApi.getLastActiveQuestions()
-            TODO(">>>>>>>>>>> Must display questions or error")
+    private fun setupQuestionList() {
+        questionListRcv.apply {
+            adapter = questionListAdapter
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+            clipToPadding = false
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
+    }
+
+    private fun updateTitle(questionSize: Int = 0) {
+        title = getString(R.string.question_list_title, questionSize)
+    }
+
+    private fun fetchQuestionList() {
+        progressBar.show()
+        lifecycleScope.fetchQuestionListAsync()
+    }
+
+    private fun CoroutineScope.fetchQuestionListAsync() = launch {
+        val questionListResponse = questionsApi.getLastActiveQuestions()
+        questionListAdapter.submitList(questionListResponse.questions)
+        updateTitle(questionListResponse.questions.size)
+
+        progressBar.hide()
     }
 }
