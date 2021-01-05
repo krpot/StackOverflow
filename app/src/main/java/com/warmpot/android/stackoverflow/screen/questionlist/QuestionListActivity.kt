@@ -1,10 +1,10 @@
-package com.warmpot.android.stackoverflow.feature.questionlist
+package com.warmpot.android.stackoverflow.screen.questionlist
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.warmpot.android.stackoverflow.R
-import com.warmpot.android.stackoverflow.data.QuestionsApi
+import com.warmpot.android.stackoverflow.data.api.QuestionsApi
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

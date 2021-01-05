@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StackOverflow"
         tools:ignore="AllowBackup,UnusedAttribute">
-        <activity android:name=".feature.questionlist.QuestionListActivity">
+        <activity android:name=".screen.questionlist.QuestionListActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.MAIN" />

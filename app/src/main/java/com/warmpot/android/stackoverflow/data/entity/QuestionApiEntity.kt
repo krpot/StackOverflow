@@ -1,4 +1,4 @@
-package com.warmpot.android.stackoverflow.data
+package com.warmpot.android.stackoverflow.data.entity
 
 
 import com.google.gson.annotations.SerializedName
