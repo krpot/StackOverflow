@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.data.api.QuestionsApi
 import com.warmpot.android.stackoverflow.screen.utils.hide
 import com.warmpot.android.stackoverflow.screen.utils.nonSyncLazy
+import com.warmpot.android.stackoverflow.screen.utils.setup
 import com.warmpot.android.stackoverflow.screen.utils.show
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -54,13 +53,10 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun setupQuestionList() {
-        questionListRcv.apply {
-            adapter = questionListAdapter
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
-            clipToPadding = false
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        }
+        questionListRcv.setup(
+            recyclerAdapter = questionListAdapter,
+            showDivider = true
+        )
     }
 
     private fun updateTitle(questionSize: Int = 0) {
@@ -69,10 +65,10 @@ class QuestionListActivity : AppCompatActivity() {
 
     private fun fetchQuestionList() {
         progressBar.show()
-        lifecycleScope.fetchQuestionListAsync()
+        lifecycleScope.launchFetchQuestionList()
     }
 
-    private fun CoroutineScope.fetchQuestionListAsync() = launch {
+    private fun CoroutineScope.launchFetchQuestionList() = launch {
         val questionListResponse = questionsApi.getLastActiveQuestions()
         questionListAdapter.submitList(questionListResponse.questions)
         updateTitle(questionListResponse.questions.size)
