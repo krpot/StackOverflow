@@ -45,7 +45,7 @@ class QuestionListActivity : AppCompatActivity() {
     private fun fetchQuestionList() {
         lifecycleScope.launch {
             val questionListResponse = questionsApi.getLastActiveQuestions()
-            println("====== Question fetched: $questionListResponse")
+            TODO(">>>>>>>>>>> Must display questions or error")
         }
     }
 }
