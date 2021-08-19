@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.OneOf
+import com.warmpot.android.stackoverflow.common.onError
+import com.warmpot.android.stackoverflow.common.onSuccess
+import com.warmpot.android.stackoverflow.common.tryOneOf
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
@@ -22,7 +25,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
-import java.io.IOException
+import java.net.UnknownHostException
 import java.util.*
 
 class QuestionListActivity : AppCompatActivity() {
@@ -87,33 +90,38 @@ class QuestionListActivity : AppCompatActivity() {
             binding.loadingBar.show()
 
             val response = getQuestions(PageOptions(page = pageNo, pagesize = 20))
-            if (response is OneOf.Error) {
-                showLoadQuestionsError(response)
+            response.onError { th ->
+                showLoadQuestionsError(th)
                 hideLoadMore()
-                return@launch
+                return@onError
             }
 
-            val responseData = response as OneOf.Success<QuestionsResponse>
-            if (responseData.data.items.isEmpty()) {
-                hasNoMoreData = false
+            response.onSuccess { res ->
+                if (res.items.isEmpty()) {
+                    hasNoMoreData = false
+                    hideLoadMore()
+                    return@onSuccess
+                }
+
+                if (!res.hasMore) {
+                    hasNoMoreData = true
+                }
+
+                adapterItems.addAll(res.items)
+                questionAdapter.submitList(adapterItems)
+
+                currentPageNo++
                 hideLoadMore()
-                return@launch
             }
-
-            if (!responseData.data.hasMore) {
-                hasNoMoreData = true
-            }
-
-            adapterItems.addAll(responseData.data.items)
-            questionAdapter.submitList(adapterItems)
-
-            currentPageNo++
-            hideLoadMore()
         }
     }
 
-    private fun showLoadQuestionsError(response: OneOf.Error) {
-        Toast.makeText(this, getString(R.string.error_network_unavailable), Toast.LENGTH_SHORT).show()
+    private fun showLoadQuestionsError(th: Throwable) {
+        val strId = when (th) {
+            is UnknownHostException -> R.string.error_no_connectivity
+            else -> R.string.error_network_unavailable
+        }
+        Toast.makeText(this, strId, Toast.LENGTH_SHORT).show()
     }
 
     private fun hideLoadMore() {
@@ -123,10 +131,8 @@ class QuestionListActivity : AppCompatActivity() {
 
     private suspend fun getQuestions(options: PageOptions = PageOptions(page = 1, pagesize = 20)): OneOf<QuestionsResponse> =
         withContext(Dispatchers.IO) {
-            try {
-                OneOf.Success(stackOverflowApi.getQuestions(options))
-            } catch (e: IOException) {
-                OneOf.Error(e)
+            tryOneOf {
+                stackOverflowApi.getQuestions(options)
             }
         }
 }
