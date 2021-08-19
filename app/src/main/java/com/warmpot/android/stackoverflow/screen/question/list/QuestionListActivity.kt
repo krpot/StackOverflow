@@ -1,11 +1,14 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.warmpot.android.stackoverflow.R
+import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
@@ -19,6 +22,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
+import java.io.IOException
 import java.util.*
 
 class QuestionListActivity : AppCompatActivity() {
@@ -51,7 +55,6 @@ class QuestionListActivity : AppCompatActivity() {
                         val reachedBottom =
                             linearLayoutManager.findLastVisibleItemPosition() == questionAdapter.itemCount - 1
                         if (!hasNoMoreData && reachedBottom && !isLoadMoreInProgress) {
-                            println("###### load more!!!")
                             isLoadMoreInProgress = true
                             loadMore()
                         }
@@ -83,18 +86,25 @@ class QuestionListActivity : AppCompatActivity() {
 
             binding.loadingBar.show()
 
-            val response: QuestionsResponse = getQuestions(PageOptions(page = pageNo, pagesize = 20))
-            if (response.items.isEmpty()) {
+            val response = getQuestions(PageOptions(page = pageNo, pagesize = 20))
+            if (response is OneOf.Error) {
+                showLoadQuestionsError(response)
+                hideLoadMore()
+                return@launch
+            }
+
+            val responseData = response as OneOf.Success<QuestionsResponse>
+            if (responseData.data.items.isEmpty()) {
                 hasNoMoreData = false
                 hideLoadMore()
                 return@launch
             }
 
-            if (!response.hasMore) {
+            if (!responseData.data.hasMore) {
                 hasNoMoreData = true
             }
 
-            adapterItems.addAll(response.items)
+            adapterItems.addAll(responseData.data.items)
             questionAdapter.submitList(adapterItems)
 
             currentPageNo++
@@ -102,14 +112,22 @@ class QuestionListActivity : AppCompatActivity() {
         }
     }
 
+    private fun showLoadQuestionsError(response: OneOf.Error) {
+        Toast.makeText(this, getString(R.string.error_network_unavailable), Toast.LENGTH_SHORT).show()
+    }
+
     private fun hideLoadMore() {
         binding.loadingBar.hide()
         isLoadMoreInProgress = false
     }
 
-    private suspend fun getQuestions(options: PageOptions = PageOptions(page = 1, pagesize = 20)): QuestionsResponse =
+    private suspend fun getQuestions(options: PageOptions = PageOptions(page = 1, pagesize = 20)): OneOf<QuestionsResponse> =
         withContext(Dispatchers.IO) {
-            stackOverflowApi.getQuestions(options)
+            try {
+                OneOf.Success(stackOverflowApi.getQuestions(options))
+            } catch (e: IOException) {
+                OneOf.Error(e)
+            }
         }
 }
 
