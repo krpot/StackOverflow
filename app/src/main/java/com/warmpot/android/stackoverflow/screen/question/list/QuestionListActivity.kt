@@ -3,16 +3,12 @@ package com.warmpot.android.stackoverflow.screen.question.list
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
 import com.warmpot.android.stackoverflow.network.PageOptions
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
-import com.warmpot.android.stackoverflow.utils.hide
-import com.warmpot.android.stackoverflow.utils.show
+import com.warmpot.android.stackoverflow.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,27 +33,19 @@ class QuestionListActivity : AppCompatActivity() {
         loadQuestions()
     }
 
-    private var hasNoMoreData = false
-    private var isLoadMoreInProgress = false
     private val adapterItems = arrayListOf<QuestionSchema>()
+    private val loadMoreListener by lazy {
+        binding.questionRcv.onLoadMore {
+            loadMore()
+        }
+    }
+
     private fun setupViews() {
         binding.apply {
-            questionRcv.adapter = questionAdapter
-            questionRcv.addItemDecoration(DividerItemDecoration(this@QuestionListActivity, DividerItemDecoration.VERTICAL))
-            questionRcv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (questionRcv.layoutManager is LinearLayoutManager) {
-                        val linearLayoutManager = questionRcv.layoutManager as LinearLayoutManager
-                        val reachedBottom =
-                            linearLayoutManager.findLastVisibleItemPosition() == questionAdapter.itemCount - 1
-                        if (!hasNoMoreData && reachedBottom && !isLoadMoreInProgress) {
-                            println("###### load more!!!")
-                            isLoadMoreInProgress = true
-                            loadMore()
-                        }
-                    }
-                }
-            })
+            questionRcv.setup(
+                adapter = questionAdapter,
+                divider = RecyclerViewDivider.Vertical
+            )
         }
     }
 
@@ -77,21 +65,19 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun loadMore(pageNo: Int = currentPageNo) {
-        if (hasNoMoreData) return
-
         lifecycleScope.launch {
 
             binding.loadingBar.show()
 
             val response: QuestionsResponse = getQuestions(PageOptions(page = pageNo, pagesize = 20))
             if (response.items.isEmpty()) {
-                hasNoMoreData = false
+                loadMoreListener.setHasMoreData(false)
                 hideLoadMore()
                 return@launch
             }
 
             if (!response.hasMore) {
-                hasNoMoreData = true
+                loadMoreListener.setHasMoreData(false)
             }
 
             adapterItems.addAll(response.items)
@@ -104,7 +90,7 @@ class QuestionListActivity : AppCompatActivity() {
 
     private fun hideLoadMore() {
         binding.loadingBar.hide()
-        isLoadMoreInProgress = false
+        loadMoreListener.setLoadMoreInProgress(false)
     }
 
     private suspend fun getQuestions(options: PageOptions = PageOptions(page = 1, pagesize = 20)): QuestionsResponse =
