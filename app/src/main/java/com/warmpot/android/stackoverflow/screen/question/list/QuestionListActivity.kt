@@ -2,10 +2,18 @@ package com.warmpot.android.stackoverflow.screen.question.list
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
+import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
-import java.time.LocalDate
+import com.warmpot.android.stackoverflow.network.StackoverflowApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.util.*
 
 class QuestionListActivity : AppCompatActivity() {
@@ -29,13 +37,28 @@ class QuestionListActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var stackOverflowApi: StackoverflowApi
+
     private fun loadQuestions() {
-        val sampleDate = LocalDate.of(2021, 8, 19).toEpochDay()
-        questionAdapter.submitList(
-            listOf(
-                QuestionSchema(title = "Yup Dynamic Validation based on Array", creationDate = sampleDate),
-                QuestionSchema(title = "how to set a GIF image as your desktop background", creationDate = sampleDate)
-            )
-        )
+        binding.loadingBar.isVisible = true
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.stackexchange.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        stackOverflowApi = retrofit.create()
+
+        lifecycleScope.launch {
+            val response: QuestionsResponse = getQuestions()
+            questionAdapter.submitList(response.items)
+
+            binding.loadingBar.isVisible = false
+        }
+    }
+
+    private suspend fun getQuestions(): QuestionsResponse = withContext(Dispatchers.IO) {
+        stackOverflowApi.getQuestions()
     }
 }
+
