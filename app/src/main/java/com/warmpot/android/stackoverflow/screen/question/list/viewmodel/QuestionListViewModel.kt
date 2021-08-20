@@ -29,6 +29,7 @@ import java.net.UnknownHostException
 class QuestionListViewModel : ViewModel() {
 
     val listItemsLiveData = MutableLiveData<List<ListItem>>(emptyList())
+    val loadingLiveData = MutableLiveData(false)
 
     private val okHttpClient by lazy {
         OkHttpClient.Builder()
@@ -54,6 +55,7 @@ class QuestionListViewModel : ViewModel() {
 
     // region public functions
     fun loadFirstPageQuestions() {
+        loadingLiveData.postValue(true)
         currentPageNo = 1
         loadMore()
     }
@@ -101,6 +103,8 @@ class QuestionListViewModel : ViewModel() {
 
                 currentPageNo++
             }
+
+            loadingLiveData.postValue(false)
         }
     }
 

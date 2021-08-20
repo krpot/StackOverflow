@@ -2,6 +2,7 @@ package com.warmpot.android.stackoverflow.screen.question.list
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.RecyclerViewHelper
@@ -53,7 +54,6 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun pullToRefresh() {
-        binding.swipeRefresh.isRefreshing = true
         viewModel.pullToRefresh()
     }
 
@@ -76,6 +76,10 @@ class QuestionListActivity : AppCompatActivity() {
         viewModel.listItemsLiveData.observe(this) { listItems ->
             questionAdapter.submitList(listItems)
             loadMoreDone()
+        }
+
+        viewModel.loadingLiveData.observe(this) { visible ->
+            binding.loadingBar.isVisible = visible
         }
     }
 }
