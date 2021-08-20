@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.onError
@@ -16,6 +14,8 @@ import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
 import com.warmpot.android.stackoverflow.network.PageOptions
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
+import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
+import com.warmpot.android.stackoverflow.screen.common.recyclerview.onLoadMore
 import com.warmpot.android.stackoverflow.utils.hide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,27 +44,18 @@ class QuestionListActivity : AppCompatActivity() {
         loadFirstPageQuestions()
     }
 
+    private lateinit var loadMoreListener: LoadMoreListener
     private var hasNoMoreData = false
-    private var isLoadMoreInProgress = false
     private val listItems = arrayListOf<ListItem>()
     private fun setupViews() {
         binding.apply {
             questionRcv.adapter = questionAdapter
             questionRcv.addItemDecoration(DividerItemDecoration(this@QuestionListActivity, DividerItemDecoration.VERTICAL))
-            questionRcv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (questionRcv.layoutManager is LinearLayoutManager) {
-                        val linearLayoutManager = questionRcv.layoutManager as LinearLayoutManager
-                        val reachedBottom =
-                            linearLayoutManager.findLastVisibleItemPosition() == questionAdapter.itemCount - 1
-                        if (!hasNoMoreData && reachedBottom && !isLoadMoreInProgress) {
-                            isLoadMoreInProgress = true
-                            showLoadMoreLoading()
-                            loadMore()
-                        }
-                    }
-                }
-            })
+            loadMoreListener = questionRcv.onLoadMore {
+                if (hasNoMoreData) return@onLoadMore
+                showLoadMoreLoading()
+                loadMore()
+            }
 
             questionAdapter.onRetryClicked {
                 showLoadMoreLoading()
@@ -96,7 +87,7 @@ class QuestionListActivity : AppCompatActivity() {
             .build()
     }
 
-    private var currentPageNo = 0;
+    private var currentPageNo = 0
     private val stackOverflowApi: StackoverflowApi by lazy { retrofit.create() }
 
     private fun loadFirstPageQuestions() {
@@ -112,14 +103,14 @@ class QuestionListActivity : AppCompatActivity() {
             val response = getQuestions(PageOptions(page = pageNo, pagesize = 20))
             response.onError { th ->
                 showLoadQuestionsError(th)
-                hideLoadMore()
+                loadMoreDone()
                 return@onError
             }
 
             response.onSuccess { res ->
                 if (res.items.isEmpty()) {
                     hasNoMoreData = false
-                    hideLoadMore()
+                    loadMoreDone()
                     showNoMoreDataItem()
                     return@onSuccess
                 }
@@ -158,7 +149,7 @@ class QuestionListActivity : AppCompatActivity() {
                 questionAdapter.submitList(listItems)
 
                 currentPageNo++
-                hideLoadMore()
+                loadMoreDone()
             }
         }
     }
@@ -180,10 +171,10 @@ class QuestionListActivity : AppCompatActivity() {
         questionAdapter.submitList(listItems.plus(LoadingState(message = getString(R.string.message_no_more_items))))
     }
 
-    private fun hideLoadMore() {
+    private fun loadMoreDone() {
         binding.loadingBar.hide()
         binding.swipeRefresh.isRefreshing = false
-        isLoadMoreInProgress = false
+        loadMoreListener.loadMoreDone()
     }
 
     private suspend fun getQuestions(options: PageOptions = PageOptions(page = 1, pagesize = 20)): OneOf<QuestionsResponse> =
