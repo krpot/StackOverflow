@@ -1,8 +1,6 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
 
-import com.google.gson.annotations.SerializedName
-
 data class Owner(
     val userId: Int,
     val acceptRate: Int,

@@ -8,23 +8,22 @@ data class OwnerSchema(
     val userId: Int,
 
     @SerializedName("accept_rate")
-    val acceptRate: Int,
+    val acceptRate: Int? = null,
 
     @SerializedName("account_id")
     val accountId: Int,
 
     @SerializedName("display_name")
-    val displayName: String,
+    val displayName: String? = null,
 
     @SerializedName("link")
-    val link: String,
+    val link: String? = null,
 
     @SerializedName("profile_image")
-    val profileImage: String,
+    val profileImage: String? = null,
 
     @SerializedName("reputation")
-    val reputation: Int,
-
+    val reputation: Int? = null,
 
     @SerializedName("user_type")
     val userType: String

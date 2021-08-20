@@ -100,6 +100,7 @@ class QuestionListActivity : AppCompatActivity() {
         loadMore()
     }
 
+    private val questionMapper by lazy { QuestionMapper() }
     private fun loadMore(pageNo: Int = currentPageNo) {
         if (hasNoMoreData) return
 
@@ -124,40 +125,24 @@ class QuestionListActivity : AppCompatActivity() {
                     hasNoMoreData = true
                 }
 
-                val questions = res.items.map { questionSchema ->
-                    val owner = questionSchema.owner
-                    Question(
-                        questionId = questionSchema.questionId,
-                        title = questionSchema.title,
-                        creationDate = EpochSecond(questionSchema.creationDate),
-                        lastActivityDate = EpochSecond(questionSchema.lastActivityDate),
-                        lastEditDate = EpochSecond(questionSchema.lastEditDate),
-                        link = questionSchema.link,
-                        owner = Owner(
-                            userId = owner?.userId ?: 0,
-                            acceptRate = owner?.acceptRate ?: 0,
-                            accountId = owner?.accountId ?: 0,
-                            displayName = owner?.displayName ?: "",
-                            link = owner?.link ?: "",
-                            profileImage = owner?.profileImage ?: "",
-                            reputation = owner?.reputation ?: 0,
-                            userType = owner?.userType ?: ""
-                        ),
-                        answerCount = questionSchema.answerCount,
-                        score = questionSchema.score,
-                        upvoteCount = questionSchema.upvoteCount,
-                        viewCount = questionSchema.viewCount,
-                    )
-                }
-
-                listItems.addAll(questions)
-                questionAdapter.submitList(listItems)
+                val questions = convertQuestionSchemas(res)
+                submitListItem(questions)
 
                 currentPageNo++
                 loadMoreDone()
             }
         }
     }
+
+    private fun submitListItem(questions: List<Question>) {
+        listItems.addAll(questions)
+        questionAdapter.submitList(listItems)
+    }
+
+    private fun convertQuestionSchemas(res: QuestionsResponse) =
+        res.items.map { questionSchema ->
+            questionMapper.convert(questionSchema)
+        }
 
     private fun showLoadMoreLoading() {
         questionAdapter.submitList(listItems.plus(LoadingState(isLoading = true)))
