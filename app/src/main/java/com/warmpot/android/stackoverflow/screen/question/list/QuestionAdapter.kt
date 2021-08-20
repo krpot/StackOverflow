@@ -1,37 +1,46 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
-import com.warmpot.android.stackoverflow.R
-import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
-import com.warmpot.android.stackoverflow.databinding.RowQuestionBinding
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
 
-class QuestionAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
+class QuestionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var items = emptyList<QuestionSchema>()
-    fun submitList(items: List<QuestionSchema>) {
+    private var retryClicked: (() -> Unit)? = null
+    private var items = emptyList<ListItem>()
+
+    fun onRetryClicked(callback: () -> Unit) {
+        this.retryClicked = callback
+    }
+
+    fun submitList(items: List<ListItem>) {
         this.items = items
         notifyDataSetChanged()
     }
 
-    fun getItem(position: Int): QuestionSchema = items[position]
+    fun getItem(position: Int): ListItem = items[position]
 
     override fun getItemCount(): Int = this.items.size
 
     override fun getItemViewType(position: Int): Int {
-        return super.getItemViewType(position)
+        return getItem(position).viewType
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
-        return QuestionViewHolder(RowQuestionBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+        return when (viewType) {
+            LoadingState.VIEW_TYPE -> LoadingStateViewHolder(itemView, retryClicked)
+            Question.VIEW_TYPE -> QuestionViewHolder(itemView)
+            else -> throw IllegalArgumentException("Invalid view type : $viewType")
+        }
     }
 
-    override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is LoadingStateViewHolder -> holder.bind(getItem(position) as LoadingState)
+            is QuestionViewHolder -> holder.bind(getItem(position) as Question)
+            else -> throw IllegalArgumentException("Invalid ViewHolder type : $holder")
+        }
     }
 }

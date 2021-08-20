@@ -1,7 +1,6 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -12,13 +11,12 @@ import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.onError
 import com.warmpot.android.stackoverflow.common.onSuccess
 import com.warmpot.android.stackoverflow.common.tryOneOf
-import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
 import com.warmpot.android.stackoverflow.network.PageOptions
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
+import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
 import com.warmpot.android.stackoverflow.utils.hide
-import com.warmpot.android.stackoverflow.utils.show
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,13 +40,13 @@ class QuestionListActivity : AppCompatActivity() {
 
         setupViews()
 
-        adapterItems.clear()
+        listItems.clear()
         loadFirstPageQuestions()
     }
 
     private var hasNoMoreData = false
     private var isLoadMoreInProgress = false
-    private val adapterItems = arrayListOf<QuestionSchema>()
+    private val listItems = arrayListOf<ListItem>()
     private fun setupViews() {
         binding.apply {
             questionRcv.adapter = questionAdapter
@@ -61,12 +59,17 @@ class QuestionListActivity : AppCompatActivity() {
                             linearLayoutManager.findLastVisibleItemPosition() == questionAdapter.itemCount - 1
                         if (!hasNoMoreData && reachedBottom && !isLoadMoreInProgress) {
                             isLoadMoreInProgress = true
-                            binding.loadingBar.show()
+                            showLoadMoreLoading()
                             loadMore()
                         }
                     }
                 }
             })
+
+            questionAdapter.onRetryClicked {
+                showLoadMoreLoading()
+                loadMore()
+            }
 
             swipeRefresh.setOnRefreshListener {
                 pullToRefresh()
@@ -117,6 +120,7 @@ class QuestionListActivity : AppCompatActivity() {
                 if (res.items.isEmpty()) {
                     hasNoMoreData = false
                     hideLoadMore()
+                    showNoMoreDataItem()
                     return@onSuccess
                 }
 
@@ -124,8 +128,34 @@ class QuestionListActivity : AppCompatActivity() {
                     hasNoMoreData = true
                 }
 
-                adapterItems.addAll(res.items)
-                questionAdapter.submitList(adapterItems)
+                val questions = res.items.map { questionSchema ->
+                    val owner = questionSchema.owner
+                    Question(
+                        questionId = questionSchema.questionId,
+                        title = questionSchema.title,
+                        creationDate = questionSchema.creationDate,
+                        lastActivityDate = questionSchema.lastActivityDate,
+                        lastEditDate = questionSchema.lastEditDate,
+                        link = questionSchema.link,
+                        owner = Owner(
+                            userId = owner?.userId ?: 0,
+                            acceptRate = owner?.acceptRate ?: 0,
+                            accountId = owner?.accountId ?: 0,
+                            displayName = owner?.displayName ?: "",
+                            link = owner?.link ?: "",
+                            profileImage = owner?.profileImage ?: "",
+                            reputation = owner?.reputation ?: 0,
+                            userType = owner?.userType ?: ""
+                        ),
+                        answerCount = questionSchema.answerCount,
+                        score = questionSchema.score,
+                        upvoteCount = questionSchema.upvoteCount,
+                        viewCount = questionSchema.viewCount,
+                    )
+                }
+
+                listItems.addAll(questions)
+                questionAdapter.submitList(listItems)
 
                 currentPageNo++
                 hideLoadMore()
@@ -133,12 +163,21 @@ class QuestionListActivity : AppCompatActivity() {
         }
     }
 
+    private fun showLoadMoreLoading() {
+        questionAdapter.submitList(listItems.plus(LoadingState(isLoading = true)))
+    }
+
     private fun showLoadQuestionsError(th: Throwable) {
         val strId = when (th) {
             is UnknownHostException -> R.string.error_no_connectivity
             else -> R.string.error_network_unavailable
         }
-        Toast.makeText(this, strId, Toast.LENGTH_SHORT).show()
+
+        questionAdapter.submitList(listItems.plus(LoadingState(message = getString(strId), isRetry = true)))
+    }
+
+    private fun showNoMoreDataItem() {
+        questionAdapter.submitList(listItems.plus(LoadingState(message = getString(R.string.message_no_more_items))))
     }
 
     private fun hideLoadMore() {

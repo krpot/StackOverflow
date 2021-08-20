@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/spacing_md"
+    android:layout_gravity="center_vertical"
+    android:paddingVertical="@dimen/spacing_lg"
     tools:context=".screen.question.list.QuestionListActivity">
 
     <ProgressBar
@@ -34,4 +35,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/messageTxt" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/errorGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="messageTxt,retryBtn"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,9 @@ package com.warmpot.android.stackoverflow.data.schema
 import com.google.gson.annotations.SerializedName
 
 data class OwnerSchema(
+    @SerializedName("user_id")
+    val userId: Int,
+
     @SerializedName("accept_rate")
     val acceptRate: Int,
 
@@ -22,8 +25,6 @@ data class OwnerSchema(
     @SerializedName("reputation")
     val reputation: Int,
 
-    @SerializedName("user_id")
-    val userId: Int,
 
     @SerializedName("user_type")
     val userType: String
