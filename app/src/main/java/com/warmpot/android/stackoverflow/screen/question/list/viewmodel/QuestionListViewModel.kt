@@ -1,5 +1,6 @@
 package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,8 +29,10 @@ import java.net.UnknownHostException
 
 class QuestionListViewModel : ViewModel() {
 
-    val listItemsLiveData = MutableLiveData<List<ListItem>>(emptyList())
-    val loadingLiveData = MutableLiveData(false)
+    private val listItemsLiveData = MutableLiveData<List<ListItem>>(emptyList())
+    val listItems: LiveData<List<ListItem>> get() = listItemsLiveData
+    private val loadingLiveData = MutableLiveData(false)
+    val loading: LiveData<Boolean> get() = loadingLiveData
 
     private val okHttpClient by lazy {
         OkHttpClient.Builder()
@@ -47,7 +50,7 @@ class QuestionListViewModel : ViewModel() {
 
     private val stackOverflowApi: StackoverflowApi by lazy { retrofit.create() }
 
-    private val listItems = arrayListOf<ListItem>()
+    private val questions = arrayListOf<ListItem>()
 
     private var currentPageNo = 0
     private var hasNoMoreData = false
@@ -110,22 +113,22 @@ class QuestionListViewModel : ViewModel() {
 
     // region post functions
     private fun postFetchedQuestions(questions: List<Question>) {
-        listItems.addAll(questions)
-        postListItems(listItems)
+        this.questions.addAll(questions)
+        postListItems(this.questions)
     }
 
     private fun postLoadMoreLoading() {
-        postListItems(listItems.plus(LoadingState(isLoading = true)))
+        postListItems(questions.plus(LoadingState(isLoading = true)))
     }
 
     private fun postLoadQuestionsError(th: Throwable) {
         val strId = throwableToStrId(th)
-        postListItems(listItems.plus(LoadingState(message = Str.from(strId), isRetry = true)))
+        postListItems(questions.plus(LoadingState(message = Str.from(strId), isRetry = true)))
     }
 
     private fun postNoMoreDataItem() {
         val loadingState = LoadingState(message = Str.from(R.string.message_no_more_items))
-        postListItems(listItems.plus(loadingState))
+        postListItems(questions.plus(loadingState))
     }
     // endregion post functions
 

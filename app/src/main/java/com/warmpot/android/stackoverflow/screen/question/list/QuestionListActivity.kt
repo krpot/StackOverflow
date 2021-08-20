@@ -73,12 +73,12 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel.listItemsLiveData.observe(this) { listItems ->
+        viewModel.listItems.observe(this) { listItems ->
             questionAdapter.submitList(listItems)
             loadMoreDone()
         }
 
-        viewModel.loadingLiveData.observe(this) { visible ->
+        viewModel.loading.observe(this) { visible ->
             binding.loadingBar.isVisible = visible
         }
     }
