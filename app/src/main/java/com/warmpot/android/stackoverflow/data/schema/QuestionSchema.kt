@@ -35,5 +35,8 @@ data class QuestionSchema(
     val upvoteCount: Int = 0,
 
     @SerializedName("view_count")
-    val viewCount: Int = 0
+    val viewCount: Int = 0,
+
+    @SerializedName("tags")
+    val tags: List<String> = emptyList()
 )

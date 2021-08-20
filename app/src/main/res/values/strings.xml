@@ -3,7 +3,6 @@
     <string name="question_votes_fmt">%1$d votes</string>
     <string name="question_answer_fmt">%1$d answers</string>
     <string name="question_views_fmt">%1$d views</string>
-    <string name="question_item_footer_fmt">%1$d votes ᐧ %2$d answers ᐧ %3$d views</string>
     <string name="error_no_connectivity">No Internet connection. Please try again.</string>
     <string name="error_network_unavailable">Network is not available</string>
     <string name="message_no_more_items">No more items</string>

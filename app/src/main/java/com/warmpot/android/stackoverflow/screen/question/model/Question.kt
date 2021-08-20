@@ -18,6 +18,7 @@ data class Question(
     val score: Int = 0,
     val upvoteCount: Int = 0,
     val viewCount: Int = 0,
+    val tags: List<String> = emptyList(),
     override val viewType: Int = VIEW_TYPE
 ) : ListItem {
     companion object {

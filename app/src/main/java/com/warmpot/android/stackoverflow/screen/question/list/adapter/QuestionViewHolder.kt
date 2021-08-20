@@ -2,13 +2,10 @@ package com.warmpot.android.stackoverflow.screen.question.list.adapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.warmpot.android.stackoverflow.R
-import com.warmpot.android.stackoverflow.common.format
+import com.warmpot.android.stackoverflow.common.agoText
 import com.warmpot.android.stackoverflow.databinding.RowQuestionBinding
 import com.warmpot.android.stackoverflow.screen.question.model.Question
-import com.warmpot.android.stackoverflow.utils.resStr
-import java.time.*
-import java.time.format.DateTimeFormatter
+import com.warmpot.android.stackoverflow.utils.toHtml
 
 class QuestionViewHolder(
     itemView: View
@@ -18,17 +15,13 @@ class QuestionViewHolder(
 
     fun bind(item: Question) {
         binding.apply {
-            titleTxt.text = item.title
-            footerTxt.text =
-                itemView.resStr(R.string.question_item_footer_fmt, item.upvoteCount, item.answerCount, item.viewCount)
-            creationDateTxt.text = item.lastActivityDate.format()
+            upvoteCountTxt.text = item.upvoteCount.toString()
+            answerCountTxt.text = item.answerCount.toString()
+            titleTxt.text = item.title.toHtml()
+            tagTxt.text = item.tags.joinToString(" ᐧ ")
+            lastActivityDateTxt.text = item.lastActivityDate.agoText()
+            ownerTxt.text = item.owner?.displayName.toHtml()
         }
-    }
-
-    private fun formatDate(time: Long): String {
-        val instant = Instant.ofEpochSecond(time)
-        val ofInstant = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
-        return ofInstant.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
     }
 }
 

@@ -24,6 +24,7 @@ class QuestionMapper : Mapper<QuestionSchema, Question> {
                 score = score,
                 upvoteCount = upvoteCount,
                 viewCount = viewCount,
+                tags = src.tags.take(3)
             )
         }
     }
