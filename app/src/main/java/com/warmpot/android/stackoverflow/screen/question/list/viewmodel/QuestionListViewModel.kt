@@ -12,6 +12,7 @@ import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.network.PageOptions
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
+import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.list.LoadingState
 import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionMapper
 import com.warmpot.android.stackoverflow.screen.question.model.Question
@@ -63,21 +64,19 @@ class QuestionListViewModel : ViewModel() {
         loadMore()
     }
 
-    fun loadMore(pageNo: Int = currentPageNo) {
+    private fun loadMore(pageNo: Int = currentPageNo) {
         if (hasNoMoreData) return
 
         viewModelScope.launch {
             val response = getQuestions(PageOptions(page = pageNo, pagesize = 20))
             response.onError { th ->
                 showLoadQuestionsError(th)
-                loadMoreDone()
                 return@onError
             }
 
             response.onSuccess { res ->
                 if (res.items.isEmpty()) {
                     hasNoMoreData = false
-                    loadMoreDone()
                     showNoMoreDataItem()
                     return@onSuccess
                 }
@@ -90,14 +89,12 @@ class QuestionListViewModel : ViewModel() {
                 submitListItem(questions)
 
                 currentPageNo++
-                loadMoreDone()
             }
         }
     }
 
     private fun submitListItem(questions: List<Question>) {
         listItems.addAll(questions)
-        //questionAdapter.submitList(listItems)
         postListItems(listItems)
     }
 
@@ -111,22 +108,20 @@ class QuestionListViewModel : ViewModel() {
     }
 
     private fun showLoadQuestionsError(th: Throwable) {
-        val strId = when (th) {
+        val strId = throwableToStrId(th)
+        postListItems(listItems.plus(LoadingState(message = Str.from(strId), isRetry = true)))
+    }
+
+    private fun throwableToStrId(th: Throwable): Int {
+        return when (th) {
             is UnknownHostException -> R.string.error_no_connectivity
             else -> R.string.error_network_unavailable
         }
-
-        postListItems(listItems.plus(LoadingState(messageId = strId, isRetry = true)))
     }
 
     private fun showNoMoreDataItem() {
-        postListItems(listItems.plus(LoadingState(messageId = R.string.message_no_more_items)))
-    }
-
-    private fun loadMoreDone() {
-        //binding.loadingBar.hide()
-        //binding.swipeRefresh.isRefreshing = false
-        //loadMoreListener.loadMoreDone()
+        val loadingState = LoadingState(message = Str.from(R.string.message_no_more_items))
+        postListItems(listItems.plus(loadingState))
     }
 
     private suspend fun getQuestions(options: PageOptions = PageOptions(page = 1, pagesize = 20)): OneOf<QuestionsResponse> =
