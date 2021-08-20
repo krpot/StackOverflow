@@ -1,6 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
 import android.view.View
+import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.R
@@ -35,6 +36,7 @@ class LoadingStateViewHolder(
 data class LoadingState(
     val isLoading: Boolean = false,
     val message: String? = null,
+    @StringRes val messageId: Int? = null,
     val isRetry: Boolean = false,
     override val viewType: Int = VIEW_TYPE
 ) : ListItem {
