@@ -54,7 +54,7 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun pullToRefresh() {
-        viewModel.pullToRefresh()
+        viewModel.refreshQuestions()
     }
 
     private fun loadFirstPageQuestions() {
@@ -66,7 +66,6 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun loadMoreDone() {
-        // TODO : Need to be fixed to show loading bar when initially load data
         binding.loadingBar.hide()
         binding.swipeRefresh.isRefreshing = false
         loadMoreListener.loadMoreDone()

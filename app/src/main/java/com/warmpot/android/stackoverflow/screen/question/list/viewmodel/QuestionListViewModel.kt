@@ -59,28 +59,28 @@ class QuestionListViewModel : ViewModel() {
     // region public functions
     fun loadFirstPageQuestions() {
         loadingLiveData.postValue(true)
-        currentPageNo = 1
-        loadMore()
+        refreshQuestions()
     }
 
     fun triggerLoadMore() {
         if (hasNoMoreData) return
 
         postLoadMoreLoading()
-        loadMore()
+        fetchQuestionsForPage()
     }
 
     fun retryClicked() {
         postLoadMoreLoading()
-        loadMore()
+        fetchQuestionsForPage()
     }
 
-    fun pullToRefresh() {
-        loadFirstPageQuestions()
+    fun refreshQuestions() {
+        currentPageNo = 1
+        fetchQuestionsForPage()
     }
     // endregion public functions
 
-    private fun loadMore(pageNo: Int = currentPageNo) {
+    private fun fetchQuestionsForPage(pageNo: Int = currentPageNo) {
         if (hasNoMoreData) return
 
         viewModelScope.launch {
