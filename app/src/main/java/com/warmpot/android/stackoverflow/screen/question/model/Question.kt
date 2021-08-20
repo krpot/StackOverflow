@@ -1,8 +1,9 @@
-package com.warmpot.android.stackoverflow.screen.question.list
+package com.warmpot.android.stackoverflow.screen.question.model
 
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.EpochSecond
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
+import com.warmpot.android.stackoverflow.screen.user.model.Owner
 
 
 data class Question(
@@ -18,7 +19,7 @@ data class Question(
     val upvoteCount: Int = 0,
     val viewCount: Int = 0,
     override val viewType: Int = VIEW_TYPE
-): ListItem {
+) : ListItem {
     companion object {
         const val VIEW_TYPE = R.layout.row_question
     }

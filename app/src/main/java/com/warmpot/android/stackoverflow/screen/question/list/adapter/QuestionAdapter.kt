@@ -1,9 +1,12 @@
-package com.warmpot.android.stackoverflow.screen.question.list
+package com.warmpot.android.stackoverflow.screen.question.list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
+import com.warmpot.android.stackoverflow.screen.question.list.LoadingState
+import com.warmpot.android.stackoverflow.screen.question.list.LoadingStateViewHolder
+import com.warmpot.android.stackoverflow.screen.question.model.Question
 
 class QuestionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

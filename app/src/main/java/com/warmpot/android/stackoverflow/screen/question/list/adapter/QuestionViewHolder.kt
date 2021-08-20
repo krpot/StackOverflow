@@ -1,15 +1,14 @@
-package com.warmpot.android.stackoverflow.screen.question.list
+package com.warmpot.android.stackoverflow.screen.question.list.adapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.format
 import com.warmpot.android.stackoverflow.databinding.RowQuestionBinding
+import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.utils.resStr
-import java.text.SimpleDateFormat
 import java.time.*
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class QuestionViewHolder(
     itemView: View

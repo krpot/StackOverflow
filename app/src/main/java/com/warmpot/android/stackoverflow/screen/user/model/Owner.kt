@@ -1,4 +1,4 @@
-package com.warmpot.android.stackoverflow.screen.question.list
+package com.warmpot.android.stackoverflow.screen.user.model
 
 
 data class Owner(

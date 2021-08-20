@@ -1,7 +1,8 @@
-package com.warmpot.android.stackoverflow.screen.question.list
+package com.warmpot.android.stackoverflow.screen.user.mapper
 
 import com.warmpot.android.stackoverflow.common.Mapper
 import com.warmpot.android.stackoverflow.data.schema.OwnerSchema
+import com.warmpot.android.stackoverflow.screen.user.model.Owner
 
 class OwnerMapper : Mapper<OwnerSchema, Owner> {
 

@@ -1,8 +1,10 @@
-package com.warmpot.android.stackoverflow.screen.question.list
+package com.warmpot.android.stackoverflow.screen.question.mapper
 
 import com.warmpot.android.stackoverflow.common.EpochSecond
 import com.warmpot.android.stackoverflow.common.Mapper
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
+import com.warmpot.android.stackoverflow.screen.question.model.Question
+import com.warmpot.android.stackoverflow.screen.user.mapper.OwnerMapper
 
 class QuestionMapper : Mapper<QuestionSchema, Question> {
 
