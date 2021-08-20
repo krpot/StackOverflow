@@ -1,15 +1,16 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
 import com.warmpot.android.stackoverflow.R
+import com.warmpot.android.stackoverflow.common.EpochSecond
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
 
 
 data class Question(
     val questionId: Int = 0,
     val title: String = "",
-    val creationDate: Long = 0L,
-    val lastActivityDate: Long = 0L,
-    val lastEditDate: Long = 0L,
+    val creationDate: EpochSecond,
+    val lastActivityDate: EpochSecond,
+    val lastEditDate: EpochSecond,
     val link: String = "",
     val owner: Owner? = null,
     val answerCount: Int = 0,

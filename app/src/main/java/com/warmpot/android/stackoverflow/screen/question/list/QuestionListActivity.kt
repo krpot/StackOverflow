@@ -3,19 +3,16 @@ package com.warmpot.android.stackoverflow.screen.question.list
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.warmpot.android.stackoverflow.R
-import com.warmpot.android.stackoverflow.common.OneOf
-import com.warmpot.android.stackoverflow.common.onError
-import com.warmpot.android.stackoverflow.common.onSuccess
-import com.warmpot.android.stackoverflow.common.tryOneOf
+import com.warmpot.android.stackoverflow.common.*
 import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
 import com.warmpot.android.stackoverflow.network.PageOptions
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
-import com.warmpot.android.stackoverflow.screen.common.recyclerview.onLoadMore
+import com.warmpot.android.stackoverflow.screen.common.recyclerview.RecyclerViewHelper
+import com.warmpot.android.stackoverflow.utils.RecyclerViewDivider
 import com.warmpot.android.stackoverflow.utils.hide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,12 +46,13 @@ class QuestionListActivity : AppCompatActivity() {
     private val listItems = arrayListOf<ListItem>()
     private fun setupViews() {
         binding.apply {
-            questionRcv.adapter = questionAdapter
-            questionRcv.addItemDecoration(DividerItemDecoration(this@QuestionListActivity, DividerItemDecoration.VERTICAL))
-            loadMoreListener = questionRcv.onLoadMore {
-                if (hasNoMoreData) return@onLoadMore
-                showLoadMoreLoading()
-                loadMore()
+            RecyclerViewHelper(
+                recyclerView = questionRcv,
+                adapter = questionAdapter,
+                divider = RecyclerViewDivider.Vertical,
+                onLoadMore = ::triggerLoadMore
+            ).also { helper ->
+                loadMoreListener = requireNotNull(helper.loadMoreListener)
             }
 
             questionAdapter.onRetryClicked {
@@ -95,6 +93,13 @@ class QuestionListActivity : AppCompatActivity() {
         loadMore()
     }
 
+    private fun triggerLoadMore() {
+        if (hasNoMoreData) return
+
+        showLoadMoreLoading()
+        loadMore()
+    }
+
     private fun loadMore(pageNo: Int = currentPageNo) {
         if (hasNoMoreData) return
 
@@ -124,9 +129,9 @@ class QuestionListActivity : AppCompatActivity() {
                     Question(
                         questionId = questionSchema.questionId,
                         title = questionSchema.title,
-                        creationDate = questionSchema.creationDate,
-                        lastActivityDate = questionSchema.lastActivityDate,
-                        lastEditDate = questionSchema.lastEditDate,
+                        creationDate = EpochSecond(questionSchema.creationDate),
+                        lastActivityDate = EpochSecond(questionSchema.lastActivityDate),
+                        lastEditDate = EpochSecond(questionSchema.lastEditDate),
                         link = questionSchema.link,
                         owner = Owner(
                             userId = owner?.userId ?: 0,

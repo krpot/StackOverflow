@@ -3,10 +3,13 @@ package com.warmpot.android.stackoverflow.screen.question.list
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.R
+import com.warmpot.android.stackoverflow.common.format
 import com.warmpot.android.stackoverflow.databinding.RowQuestionBinding
 import com.warmpot.android.stackoverflow.utils.resStr
-import java.time.LocalDate
+import java.text.SimpleDateFormat
+import java.time.*
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class QuestionViewHolder(
     itemView: View
@@ -19,7 +22,14 @@ class QuestionViewHolder(
             titleTxt.text = item.title
             footerTxt.text =
                 itemView.resStr(R.string.question_item_footer_fmt, item.upvoteCount, item.answerCount, item.viewCount)
-            creationDateTxt.text = LocalDate.ofEpochDay(item.creationDate).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+            creationDateTxt.text = item.lastActivityDate.format()
         }
     }
+
+    private fun formatDate(time: Long): String {
+        val instant = Instant.ofEpochSecond(time)
+        val ofInstant = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
+        return ofInstant.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+    }
 }
+
