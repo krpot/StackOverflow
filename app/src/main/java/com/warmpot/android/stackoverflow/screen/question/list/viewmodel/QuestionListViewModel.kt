@@ -52,6 +52,7 @@ class QuestionListViewModel : ViewModel() {
     private var hasNoMoreData = false
     private val questionMapper by lazy { QuestionMapper() }
 
+    // region public functions
     fun loadFirstPageQuestions() {
         currentPageNo = 1
         loadMore()
@@ -60,9 +61,19 @@ class QuestionListViewModel : ViewModel() {
     fun triggerLoadMore() {
         if (hasNoMoreData) return
 
-        showLoadMoreLoading()
+        postLoadMoreLoading()
         loadMore()
     }
+
+    fun retryClicked() {
+        postLoadMoreLoading()
+        loadMore()
+    }
+
+    fun pullToRefresh() {
+        loadFirstPageQuestions()
+    }
+    // endregion public functions
 
     private fun loadMore(pageNo: Int = currentPageNo) {
         if (hasNoMoreData) return
@@ -70,14 +81,14 @@ class QuestionListViewModel : ViewModel() {
         viewModelScope.launch {
             val response = getQuestions(PageOptions(page = pageNo, pagesize = 20))
             response.onError { th ->
-                showLoadQuestionsError(th)
+                postLoadQuestionsError(th)
                 return@onError
             }
 
             response.onSuccess { res ->
                 if (res.items.isEmpty()) {
                     hasNoMoreData = false
-                    showNoMoreDataItem()
+                    postNoMoreDataItem()
                     return@onSuccess
                 }
 
@@ -86,44 +97,35 @@ class QuestionListViewModel : ViewModel() {
                 }
 
                 val questions = convertQuestionSchemas(res)
-                submitListItem(questions)
+                postFetchedQuestions(questions)
 
                 currentPageNo++
             }
         }
     }
 
-    private fun submitListItem(questions: List<Question>) {
+    // region post functions
+    private fun postFetchedQuestions(questions: List<Question>) {
         listItems.addAll(questions)
         postListItems(listItems)
     }
 
-    private fun convertQuestionSchemas(res: QuestionsResponse) =
-        res.items.map { questionSchema ->
-            questionMapper.convert(questionSchema)
-        }
-
-    private fun showLoadMoreLoading() {
+    private fun postLoadMoreLoading() {
         postListItems(listItems.plus(LoadingState(isLoading = true)))
     }
 
-    private fun showLoadQuestionsError(th: Throwable) {
+    private fun postLoadQuestionsError(th: Throwable) {
         val strId = throwableToStrId(th)
         postListItems(listItems.plus(LoadingState(message = Str.from(strId), isRetry = true)))
     }
 
-    private fun throwableToStrId(th: Throwable): Int {
-        return when (th) {
-            is UnknownHostException -> R.string.error_no_connectivity
-            else -> R.string.error_network_unavailable
-        }
-    }
-
-    private fun showNoMoreDataItem() {
+    private fun postNoMoreDataItem() {
         val loadingState = LoadingState(message = Str.from(R.string.message_no_more_items))
         postListItems(listItems.plus(loadingState))
     }
+    // endregion post functions
 
+    // region private helper functions
     private suspend fun getQuestions(options: PageOptions = PageOptions(page = 1, pagesize = 20)): OneOf<QuestionsResponse> =
         withContext(Dispatchers.IO) {
             tryOneOf {
@@ -135,12 +137,16 @@ class QuestionListViewModel : ViewModel() {
         listItemsLiveData.postValue(items)
     }
 
-    fun retryClicked() {
-        showLoadMoreLoading()
-        loadMore()
-    }
+    private fun convertQuestionSchemas(res: QuestionsResponse) =
+        res.items.map { questionSchema ->
+            questionMapper.convert(questionSchema)
+        }
 
-    fun pullToRefresh() {
-        loadFirstPageQuestions()
+    private fun throwableToStrId(th: Throwable): Int {
+        return when (th) {
+            is UnknownHostException -> R.string.error_no_connectivity
+            else -> R.string.error_network_unavailable
+        }
     }
+    // endregion private helper functions
 }
