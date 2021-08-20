@@ -3,4 +3,7 @@
     <dimen name="activity_border_padding">16dp</dimen>
     <dimen name="row_default_vertical_margin_sm">4dp</dimen>
     <dimen name="row_default_vertical_padding">8dp</dimen>
+    <dimen name="spacing_xs">2dp</dimen>
+    <dimen name="spacing_sm">4dp</dimen>
+    <dimen name="spacing_md">8dp</dimen>
 </resources>

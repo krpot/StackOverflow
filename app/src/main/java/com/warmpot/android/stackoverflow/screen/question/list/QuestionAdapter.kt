@@ -23,6 +23,10 @@ class QuestionAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
 
     override fun getItemCount(): Int = this.items.size
 
+    override fun getItemViewType(position: Int): Int {
+        return super.getItemViewType(position)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
         return QuestionViewHolder(RowQuestionBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
@@ -30,22 +34,4 @@ class QuestionAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
     override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-}
-
-class QuestionViewHolder(
-    private val binding: RowQuestionBinding
-) : RecyclerView.ViewHolder(binding.root) {
-
-    fun bind(item: QuestionSchema) {
-        binding.apply {
-            titleTxt.text = item.title
-            footerTxt.text =
-                itemView.resStr(R.string.question_item_footer_fmt, item.upvoteCount, item.answerCount, item.viewCount)
-            creationDateTxt.text = LocalDate.ofEpochDay(item.creationDate).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-        }
-    }
-}
-
-fun View.resStr(@StringRes resId: Int, vararg formatArgs: Any?): String {
-    return this.resources.getString(resId, *formatArgs)
 }
