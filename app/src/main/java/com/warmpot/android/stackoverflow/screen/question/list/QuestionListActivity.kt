@@ -22,6 +22,8 @@ import com.warmpot.android.stackoverflow.utils.show
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -41,7 +43,7 @@ class QuestionListActivity : AppCompatActivity() {
         setupViews()
 
         adapterItems.clear()
-        loadQuestions()
+        loadFirstPageQuestions()
     }
 
     private var hasNoMoreData = false
@@ -59,17 +61,34 @@ class QuestionListActivity : AppCompatActivity() {
                             linearLayoutManager.findLastVisibleItemPosition() == questionAdapter.itemCount - 1
                         if (!hasNoMoreData && reachedBottom && !isLoadMoreInProgress) {
                             isLoadMoreInProgress = true
+                            binding.loadingBar.show()
                             loadMore()
                         }
                     }
                 }
             })
+
+            swipeRefresh.setOnRefreshListener {
+                pullToRefresh()
+            }
         }
+    }
+
+    private fun pullToRefresh() {
+        binding.swipeRefresh.isRefreshing = true
+        loadFirstPageQuestions()
+    }
+
+    private val okHttpClient by lazy {
+        OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor())
+            .build()
     }
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://api.stackexchange.com/")
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -77,7 +96,7 @@ class QuestionListActivity : AppCompatActivity() {
     private var currentPageNo = 0;
     private val stackOverflowApi: StackoverflowApi by lazy { retrofit.create() }
 
-    private fun loadQuestions() {
+    private fun loadFirstPageQuestions() {
         currentPageNo = 1
         loadMore()
     }
@@ -86,8 +105,6 @@ class QuestionListActivity : AppCompatActivity() {
         if (hasNoMoreData) return
 
         lifecycleScope.launch {
-
-            binding.loadingBar.show()
 
             val response = getQuestions(PageOptions(page = pageNo, pagesize = 20))
             response.onError { th ->
@@ -126,6 +143,7 @@ class QuestionListActivity : AppCompatActivity() {
 
     private fun hideLoadMore() {
         binding.loadingBar.hide()
+        binding.swipeRefresh.isRefreshing = false
         isLoadMoreInProgress = false
     }
 

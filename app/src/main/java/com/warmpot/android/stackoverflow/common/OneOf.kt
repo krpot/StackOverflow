@@ -21,6 +21,7 @@ suspend fun <T> tryOneOf(action: suspend () -> T): OneOf<T> {
     return try {
         OneOf.Success(action())
     } catch (e: Throwable) {
+        e.printStackTrace()
         OneOf.Error(e)
     }
 }
