@@ -8,6 +8,7 @@ import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionsUseCase
 import com.warmpot.android.stackoverflow.domain.usecase.QuestionFetchResult
+import com.warmpot.android.stackoverflow.network.NetworkModule
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
 import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
@@ -21,7 +22,11 @@ import java.net.UnknownHostException
 
 class QuestionListViewModel : ViewModel() {
 
-    private val getQuestionsUseCase by lazy { GetQuestionsUseCase() }
+    private val getQuestionsUseCase by lazy {
+        GetQuestionsUseCase(
+            stackOverflowApi = NetworkModule.stackOverflowApi
+        )
+    }
 
     private val listItemsLiveData = MutableLiveData<List<ListItem>>()
     val listItems: LiveData<List<ListItem>> get() = listItemsLiveData

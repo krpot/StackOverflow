@@ -7,29 +7,10 @@ import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
-class GetQuestionsUseCase {
-
-    private val okHttpClient by lazy {
-        OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor())
-            .build()
-    }
-
-    private val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.stackexchange.com/")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    private val stackOverflowApi: StackoverflowApi by lazy { retrofit.create() }
+class GetQuestionsUseCase(
+    private val stackOverflowApi: StackoverflowApi
+) {
 
     private val cache = arrayListOf<QuestionSchema>()
     private var page: Int = 1
