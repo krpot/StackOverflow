@@ -5,116 +5,89 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.warmpot.android.stackoverflow.R
-import com.warmpot.android.stackoverflow.common.OneOf
-import com.warmpot.android.stackoverflow.common.onError
-import com.warmpot.android.stackoverflow.common.onSuccess
-import com.warmpot.android.stackoverflow.common.tryOneOf
-import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
-import com.warmpot.android.stackoverflow.network.PageOptions
-import com.warmpot.android.stackoverflow.network.StackoverflowApi
+import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
+import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionsUseCase
+import com.warmpot.android.stackoverflow.domain.usecase.QuestionFetchResult
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
+import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.list.LoadingState
 import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionMapper
 import com.warmpot.android.stackoverflow.screen.question.model.Question
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
+import retrofit2.HttpException
 import java.net.UnknownHostException
 
 class QuestionListViewModel : ViewModel() {
 
-    private val listItemsLiveData = MutableLiveData<List<ListItem>>(emptyList())
+    private val getQuestionsUseCase by lazy { GetQuestionsUseCase() }
+
+    private val listItemsLiveData = MutableLiveData<List<ListItem>>()
     val listItems: LiveData<List<ListItem>> get() = listItemsLiveData
     private val loadingLiveData = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = loadingLiveData
 
-    private val okHttpClient by lazy {
-        OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor())
-            .build()
-    }
-
-    private val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.stackexchange.com/")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    private val stackOverflowApi: StackoverflowApi by lazy { retrofit.create() }
-
-    private val questions = arrayListOf<ListItem>()
-
-    private var currentPageNo = 0
-    private var hasNoMoreData = false
     private val questionMapper by lazy { QuestionMapper() }
+
+    private val questions: List<ListItem>
+        get() = listItemsLiveData.value?.filterIsInstance<Question>() ?: emptyList()
+
+    private var job: Job? = null
 
     // region public functions
     fun loadFirstPageQuestions() {
-        loadingLiveData.postValue(true)
-        refreshQuestions()
-    }
-
-    fun triggerLoadMore() {
-        if (hasNoMoreData) return
-
-        postLoadMoreLoading()
-        fetchQuestionsForPage()
-    }
-
-    fun retryClicked() {
-        postLoadMoreLoading()
-        fetchQuestionsForPage()
-    }
-
-    fun refreshQuestions() {
-        currentPageNo = 1
-        fetchQuestionsForPage()
-    }
-    // endregion public functions
-
-    private fun fetchQuestionsForPage(pageNo: Int = currentPageNo) {
-        if (hasNoMoreData) return
-
-        viewModelScope.launch {
-            val response = getQuestions(PageOptions(page = pageNo, pagesize = 20))
-            response.onError { th ->
-                postLoadQuestionsError(th)
-                return@onError
-            }
-
-            response.onSuccess { res ->
-                if (res.items.isEmpty()) {
-                    hasNoMoreData = false
-                    postNoMoreDataItem()
-                    return@onSuccess
-                }
-
-                if (!res.hasMore) {
-                    hasNoMoreData = true
-                }
-
-                val questions = convertQuestionSchemas(res)
-                postFetchedQuestions(questions)
-
-                currentPageNo++
-            }
-
-            loadingLiveData.postValue(false)
+        throttleApiCall {
+            loadingLiveData.postValue(true)
+            val result = getQuestionsUseCase.loadFirstPage()
+            handleQuestionListResult(result)
         }
     }
 
+    fun triggerLoadMore() {
+        throttleApiCall {
+            postLoadMoreLoading()
+            handleQuestionListResult(getQuestionsUseCase.loadNext())
+        }
+    }
+
+    fun pullToRefresh() {
+        throttleApiCall {
+            handleQuestionListResult(getQuestionsUseCase.refresh())
+        }
+    }
+
+    fun loadMoreRetryClicked() {
+        throttleApiCall {
+            postLoadMoreLoading()
+            handleQuestionListResult(getQuestionsUseCase.retry())
+        }
+    }
+    // endregion public functions
+
+    private fun handleQuestionListResult(result: QuestionFetchResult) {
+        when (result) {
+            is QuestionFetchResult.Failure -> {
+                postLoadQuestionsError(result.e)
+            }
+            is QuestionFetchResult.Empty -> {
+                postEmptyDataItem()
+            }
+            is QuestionFetchResult.EndOfData -> {
+                postNoMoreDataItem()
+            }
+            is QuestionFetchResult.HasData -> {
+                mapAndPostQuestions(result.data)
+            }
+        }
+
+        loadingLiveData.postValue(false)
+    }
+
     // region post functions
-    private fun postFetchedQuestions(questions: List<Question>) {
-        this.questions.addAll(questions)
-        postListItems(this.questions)
+    private fun mapAndPostQuestions(schemas: List<QuestionSchema>) {
+        val questions = schemas.map { schema -> questionMapper.convert(schema) }
+        postListItems(questions)
     }
 
     private fun postLoadMoreLoading() {
@@ -122,8 +95,13 @@ class QuestionListViewModel : ViewModel() {
     }
 
     private fun postLoadQuestionsError(th: Throwable) {
-        val strId = throwableToStrId(th)
-        postListItems(questions.plus(LoadingState(message = Str.from(strId), isRetry = true)))
+        val str = throwableToStr(th)
+        postListItems(questions.plus(LoadingState(message = str, isRetry = true)))
+    }
+
+    private fun postEmptyDataItem() {
+        val loadingState = LoadingState(message = Str.from(R.string.message_empty_items))
+        postListItems(questions.plus(loadingState))
     }
 
     private fun postNoMoreDataItem() {
@@ -133,26 +111,22 @@ class QuestionListViewModel : ViewModel() {
     // endregion post functions
 
     // region private helper functions
-    private suspend fun getQuestions(options: PageOptions = PageOptions(page = 1, pagesize = 20)): OneOf<QuestionsResponse> =
-        withContext(Dispatchers.IO) {
-            tryOneOf {
-                stackOverflowApi.getQuestions(options)
-            }
+    private fun throttleApiCall(apiCall: suspend () -> Unit) {
+        if (job.isActuallyActive()) return
+        job = viewModelScope.launch {
+            apiCall()
         }
+    }
 
     private fun postListItems(items: List<ListItem>) {
         listItemsLiveData.postValue(items)
     }
 
-    private fun convertQuestionSchemas(res: QuestionsResponse) =
-        res.items.map { questionSchema ->
-            questionMapper.convert(questionSchema)
-        }
-
-    private fun throwableToStrId(th: Throwable): Int {
+    private fun throwableToStr(th: Throwable): Str {
         return when (th) {
-            is UnknownHostException -> R.string.error_no_connectivity
-            else -> R.string.error_network_unavailable
+            is UnknownHostException -> Str.from(R.string.error_no_connectivity)
+            is HttpException -> Str.from("${th.message()} (${th.code()})")
+            else -> Str.from(R.string.error_network_unavailable)
         }
     }
     // endregion private helper functions

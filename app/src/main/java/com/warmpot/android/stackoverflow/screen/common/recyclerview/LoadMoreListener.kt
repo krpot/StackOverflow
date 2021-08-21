@@ -1,5 +1,6 @@
 package com.warmpot.android.stackoverflow.screen.common.recyclerview
 
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.concurrent.atomic.AtomicBoolean
@@ -19,7 +20,9 @@ class LoadMoreListener(
 
     init {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState != SCROLL_STATE_IDLE) return
+
                 if (reachedAtMostBottom() && !isInLoading.get()) {
                     isInLoading.set(true)
                     onLoadMore()
@@ -32,6 +35,10 @@ class LoadMoreListener(
 
     fun loadMoreDone() {
         isInLoading.set(false)
+    }
+
+    fun loadMoreStarted() {
+        isInLoading.set(true)
     }
 }
 

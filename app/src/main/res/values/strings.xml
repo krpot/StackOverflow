@@ -5,6 +5,7 @@
     <string name="question_views_fmt">%1$d views</string>
     <string name="error_no_connectivity">No Internet connection. Please try again.</string>
     <string name="error_network_unavailable">Network is not available</string>
+    <string name="message_empty_items">There is no questions to display</string>
     <string name="message_no_more_items">No more items</string>
     <string name="retry_button_caption">Retry</string>
     <string name="close_button_caption">Retry</string>

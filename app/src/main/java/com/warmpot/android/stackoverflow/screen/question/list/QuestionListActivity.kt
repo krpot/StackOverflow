@@ -44,7 +44,7 @@ class QuestionListActivity : AppCompatActivity() {
             }
 
             questionAdapter.onRetryClicked {
-               viewModel.retryClicked()
+                viewModel.loadMoreRetryClicked()
             }
 
             swipeRefresh.setOnRefreshListener {
@@ -54,7 +54,7 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun pullToRefresh() {
-        viewModel.refreshQuestions()
+        viewModel.pullToRefresh()
     }
 
     private fun loadFirstPageQuestions() {
