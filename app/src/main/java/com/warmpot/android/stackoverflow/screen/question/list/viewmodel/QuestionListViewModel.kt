@@ -8,7 +8,6 @@ import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionsUseCase
 import com.warmpot.android.stackoverflow.domain.usecase.QuestionFetchResult
-import com.warmpot.android.stackoverflow.network.NetworkModule
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
 import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
@@ -20,13 +19,9 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
-class QuestionListViewModel : ViewModel() {
-
-    private val getQuestionsUseCase by lazy {
-        GetQuestionsUseCase(
-            stackOverflowApi = NetworkModule.stackOverflowApi
-        )
-    }
+class QuestionListViewModel(
+    private val getQuestionsUseCase: GetQuestionsUseCase
+) : ViewModel() {
 
     private val listItemsLiveData = MutableLiveData<List<ListItem>>()
     val listItems: LiveData<List<ListItem>> get() = listItemsLiveData
@@ -68,7 +63,7 @@ class QuestionListViewModel : ViewModel() {
             handleQuestionListResult(getQuestionsUseCase.retry())
         }
     }
-    // endregion public functions
+// endregion public functions
 
     private fun handleQuestionListResult(result: QuestionFetchResult) {
         when (result) {
@@ -113,7 +108,7 @@ class QuestionListViewModel : ViewModel() {
         val loadingState = LoadingState(message = Str.from(R.string.message_no_more_items))
         postListItems(questions.plus(loadingState))
     }
-    // endregion post functions
+// endregion post functions
 
     // region private helper functions
     private fun throttleApiCall(apiCall: suspend () -> Unit) {
@@ -134,5 +129,5 @@ class QuestionListViewModel : ViewModel() {
             else -> Str.from(R.string.error_network_unavailable)
         }
     }
-    // endregion private helper functions
+// endregion private helper functions
 }
