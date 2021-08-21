@@ -10,8 +10,13 @@ import com.warmpot.android.stackoverflow.screen.question.model.Question
 
 class QuestionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private var itemClicked: ((Question) -> Unit)? = null
     private var retryClicked: (() -> Unit)? = null
     private var items = emptyList<ListItem>()
+
+    fun onItemClicked(callback: (Question) -> Unit) {
+        this.itemClicked = callback
+    }
 
     fun onRetryClicked(callback: () -> Unit) {
         this.retryClicked = callback
@@ -34,7 +39,7 @@ class QuestionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
             LoadingState.VIEW_TYPE -> LoadingStateViewHolder(itemView, retryClicked)
-            Question.VIEW_TYPE -> QuestionViewHolder(itemView)
+            Question.VIEW_TYPE -> QuestionViewHolder(itemView, itemClicked)
             else -> throw IllegalArgumentException("Invalid view type : $viewType")
         }
     }

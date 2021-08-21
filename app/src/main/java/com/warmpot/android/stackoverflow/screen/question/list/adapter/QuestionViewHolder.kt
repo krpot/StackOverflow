@@ -8,7 +8,8 @@ import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.utils.toHtml
 
 class QuestionViewHolder(
-    itemView: View
+    itemView: View,
+    private val itemClicked: ((Question) -> Unit)?
 ) : RecyclerView.ViewHolder(itemView) {
 
     private val binding = RowQuestionBinding.bind(itemView)
@@ -21,6 +22,10 @@ class QuestionViewHolder(
             tagTxt.text = item.tags.joinToString(" ᐧ ")
             lastActivityDateTxt.text = item.lastActivityDate.agoText()
             ownerTxt.text = item.owner?.displayName.toHtml()
+        }
+
+        itemView.setOnClickListener {
+            itemClicked?.invoke(item)
         }
     }
 }

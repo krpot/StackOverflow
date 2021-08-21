@@ -1,4 +1,4 @@
-package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
+package com.warmpot.android.stackoverflow.screen.question.details.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,9 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
-import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionsUseCase
-import com.warmpot.android.stackoverflow.domain.usecase.QuestionsFetchResult
-import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
+import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionUseCase
+import com.warmpot.android.stackoverflow.domain.usecase.QuestionFetchResult
 import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.list.LoadingState
@@ -19,64 +18,38 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
-class QuestionListViewModel(
-    private val getQuestionsUseCase: GetQuestionsUseCase
+class QuestionDetailsViewModel(
+    private val getQuestionUseCase: GetQuestionUseCase
 ) : ViewModel() {
 
-    private val listItemsLiveData = MutableLiveData<List<ListItem>>()
-    val listItems: LiveData<List<ListItem>> get() = listItemsLiveData
+    private val questionLiveData = MutableLiveData<Question>()
+    val question: LiveData<Question> get() = questionLiveData
     private val loadingLiveData = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = loadingLiveData
 
     private val questionMapper by lazy { QuestionMapper() }
 
-    private val questions: List<ListItem>
-        get() = listItemsLiveData.value?.filterIsInstance<Question>() ?: emptyList()
-
     private var job: Job? = null
 
     // region public functions
-    fun loadFirstPageQuestions() {
+    fun fetch(questionId: Int) {
         throttleApiCall {
             loadingLiveData.postValue(true)
-            val result = getQuestionsUseCase.loadFirstPage()
-            handleQuestionListResult(result)
+            val result = getQuestionUseCase.fetch(questionId)
+            handleQuestionResult(result)
         }
     }
+    // endregion public functions
 
-    fun triggerLoadMore() {
-        throttleApiCall {
-            postLoadMoreLoading()
-            handleQuestionListResult(getQuestionsUseCase.loadNext())
-        }
-    }
-
-    fun pullToRefresh() {
-        throttleApiCall {
-            handleQuestionListResult(getQuestionsUseCase.refresh())
-        }
-    }
-
-    fun loadMoreRetryClicked() {
-        throttleApiCall {
-            postLoadMoreLoading()
-            handleQuestionListResult(getQuestionsUseCase.retry())
-        }
-    }
-// endregion public functions
-
-    private fun handleQuestionListResult(result: QuestionsFetchResult) {
+    private fun handleQuestionResult(result: QuestionFetchResult) {
         when (result) {
-            is QuestionsFetchResult.Failure -> {
+            is QuestionFetchResult.Failure -> {
                 postLoadQuestionsError(result.e)
             }
-            is QuestionsFetchResult.Empty -> {
+            is QuestionFetchResult.Empty -> {
                 postEmptyDataItem()
             }
-            is QuestionsFetchResult.EndOfData -> {
-                postNoMoreDataItem()
-            }
-            is QuestionsFetchResult.HasData -> {
+            is QuestionFetchResult.HasData -> {
                 mapAndPostQuestions(result.data)
             }
         }
@@ -85,30 +58,26 @@ class QuestionListViewModel(
     }
 
     // region post functions
-    private fun mapAndPostQuestions(schemas: List<QuestionSchema>) {
-        val questions = schemas.map { schema -> questionMapper.convert(schema) }
-        postListItems(questions)
-    }
-
-    private fun postLoadMoreLoading() {
-        postListItems(questions.plus(LoadingState(isLoading = true)))
+    private fun mapAndPostQuestions(schema: QuestionSchema) {
+        val question = questionMapper.convert(schema)
+        questionLiveData.postValue(question)
     }
 
     private fun postLoadQuestionsError(th: Throwable) {
         val str = throwableToStr(th)
-        postListItems(questions.plus(LoadingState(message = str, isRetry = true)))
+        //postListItems(questions.plus(LoadingState(message = str, isRetry = true)))
     }
 
     private fun postEmptyDataItem() {
         val loadingState = LoadingState(message = Str.from(R.string.message_empty_items))
-        postListItems(questions.plus(loadingState))
+        //postListItems(questions.plus(loadingState))
     }
 
     private fun postNoMoreDataItem() {
         val loadingState = LoadingState(message = Str.from(R.string.message_no_more_items))
-        postListItems(questions.plus(loadingState))
+        //postListItems(questions.plus(loadingState))
     }
-// endregion post functions
+    // endregion post functions
 
     // region private helper functions
     private fun throttleApiCall(apiCall: suspend () -> Unit) {
@@ -116,10 +85,6 @@ class QuestionListViewModel(
         job = viewModelScope.launch {
             apiCall()
         }
-    }
-
-    private fun postListItems(items: List<ListItem>) {
-        listItemsLiveData.postValue(items)
     }
 
     private fun throwableToStr(th: Throwable): Str {

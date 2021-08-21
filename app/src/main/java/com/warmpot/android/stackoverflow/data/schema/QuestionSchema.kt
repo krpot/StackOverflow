@@ -4,11 +4,14 @@ package com.warmpot.android.stackoverflow.data.schema
 import com.google.gson.annotations.SerializedName
 
 data class QuestionSchema(
-    @SerializedName(" question_id")
+    @SerializedName("question_id")
     val questionId: Int = 0,
 
     @SerializedName("title")
     val title: String = "",
+
+    @SerializedName("body")
+    val body: String? = null,
 
     @SerializedName("creation_date")
     val creationDate: Long = 0L,

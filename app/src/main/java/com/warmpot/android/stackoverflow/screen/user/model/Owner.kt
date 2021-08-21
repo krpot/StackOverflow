@@ -1,5 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.user.model
 
+import java.io.Serializable
+
 
 data class Owner(
     val userId: Int,
@@ -10,4 +12,4 @@ data class Owner(
     val profileImage: String,
     val reputation: Int,
     val userType: String
-)
+): Serializable

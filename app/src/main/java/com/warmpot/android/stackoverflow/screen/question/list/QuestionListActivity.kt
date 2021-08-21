@@ -1,13 +1,17 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
+import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.RecyclerViewHelper
+import com.warmpot.android.stackoverflow.screen.question.details.QuestionDetailsActivity
 import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionAdapter
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
+import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.utils.RecyclerViewDivider
 import com.warmpot.android.stackoverflow.utils.hide
 import com.warmpot.android.stackoverflow.utils.viewModel
@@ -43,6 +47,10 @@ class QuestionListActivity : AppCompatActivity() {
                 loadMoreListener = requireNotNull(helper.loadMoreListener)
             }
 
+            questionAdapter.onItemClicked { question ->
+                navigateToDetails(question)
+            }
+
             questionAdapter.onRetryClicked {
                 viewModel.loadMoreRetryClicked()
             }
@@ -51,6 +59,12 @@ class QuestionListActivity : AppCompatActivity() {
                 pullToRefresh()
             }
         }
+    }
+
+    private fun navigateToDetails(question: Question) {
+        val intent = Intent(this, QuestionDetailsActivity::class.java)
+        intent.putExtra(IntentConstant.INTENT_PARAM_KEY, question)
+        startActivity(intent)
     }
 
     private fun pullToRefresh() {

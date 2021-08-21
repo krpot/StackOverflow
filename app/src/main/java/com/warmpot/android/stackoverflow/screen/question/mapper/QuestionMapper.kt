@@ -15,6 +15,7 @@ class QuestionMapper : Mapper<QuestionSchema, Question> {
             Question(
                 questionId = questionId,
                 title = title,
+                body = body ?: "",
                 creationDate = EpochSecond(creationDate),
                 lastActivityDate = EpochSecond(lastActivityDate),
                 lastEditDate = EpochSecond(lastEditDate),
