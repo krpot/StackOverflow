@@ -8,9 +8,9 @@ import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionUseCase
 import com.warmpot.android.stackoverflow.domain.usecase.QuestionFetchResult
+import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
 import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
-import com.warmpot.android.stackoverflow.screen.question.list.LoadingState
 import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionMapper
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import kotlinx.coroutines.Job

@@ -1,12 +1,9 @@
-package com.warmpot.android.stackoverflow.screen.question.list
+package com.warmpot.android.stackoverflow.screen.common.adapter
 
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.databinding.RowLoadingStateBinding
-import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
-import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.common.resource.text
 
 class LoadingStateViewHolder(
@@ -34,13 +31,3 @@ class LoadingStateViewHolder(
     }
 }
 
-data class LoadingState(
-    val isLoading: Boolean = false,
-    val message: Str? = null,
-    val isRetry: Boolean = false,
-    override val viewType: Int = VIEW_TYPE
-) : ListItem {
-    companion object {
-        const val VIEW_TYPE = R.layout.row_loading_state
-    }
-}

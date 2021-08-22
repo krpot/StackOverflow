@@ -3,8 +3,10 @@ package com.warmpot.android.stackoverflow.screen.question.list
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
+import androidx.recyclerview.widget.ConcatAdapter
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
+import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
+import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingStateAdapter
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.RecyclerViewHelper
@@ -22,7 +24,9 @@ class QuestionListActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityQuestionListBinding.inflate(layoutInflater) }
 
+    private val loadingStateAdapter by lazy { LoadingStateAdapter() }
     private val questionAdapter by lazy { QuestionAdapter() }
+    private val concatAdapter by lazy { ConcatAdapter(questionAdapter, loadingStateAdapter) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +44,7 @@ class QuestionListActivity : AppCompatActivity() {
         binding.apply {
             RecyclerViewHelper(
                 recyclerView = questionRcv,
-                adapter = questionAdapter,
+                adapter = concatAdapter,
                 divider = RecyclerViewDivider.Vertical,
                 onLoadMore = ::triggerLoadMore
             ).also { helper ->
@@ -51,7 +55,7 @@ class QuestionListActivity : AppCompatActivity() {
                 navigateToDetails(question)
             }
 
-            questionAdapter.onRetryClicked {
+            loadingStateAdapter.onRetryClicked {
                 viewModel.loadMoreRetryClicked()
             }
 
@@ -86,13 +90,22 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel.listItems.observe(this) { listItems ->
-            questionAdapter.submitList(listItems)
-            loadMoreDone()
+        viewModel.loading.observe(this) { loadingStates ->
+            handleLoadMore(loadingStates)
         }
 
-        viewModel.loading.observe(this) { visible ->
-            binding.loadingBar.isVisible = visible
+        viewModel.questions.observe(this) { questions ->
+            handleQuestionFetched(questions)
         }
+    }
+
+    private fun handleQuestionFetched(questions: List<Question>?) {
+        questionAdapter.submitList(questions) {
+            loadMoreDone()
+        }
+    }
+
+    private fun handleLoadMore(loadingStates: List<LoadingState>?) {
+        loadingStateAdapter.submitList(loadingStates)
     }
 }

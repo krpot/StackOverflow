@@ -8,10 +8,9 @@ import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionsUseCase
 import com.warmpot.android.stackoverflow.domain.usecase.QuestionsFetchResult
-import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
+import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
 import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
-import com.warmpot.android.stackoverflow.screen.question.list.LoadingState
 import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionMapper
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import kotlinx.coroutines.Job
@@ -23,22 +22,18 @@ class QuestionListViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase
 ) : ViewModel() {
 
-    private val listItemsLiveData = MutableLiveData<List<ListItem>>()
-    val listItems: LiveData<List<ListItem>> get() = listItemsLiveData
-    private val loadingLiveData = MutableLiveData(false)
-    val loading: LiveData<Boolean> get() = loadingLiveData
+    private val questionsLiveData = MutableLiveData<List<Question>>()
+    val questions: LiveData<List<Question>> get() = questionsLiveData
+    private val loadingLiveData = MutableLiveData<List<LoadingState>>()
+    val loading: LiveData<List<LoadingState>> get() = loadingLiveData
 
     private val questionMapper by lazy { QuestionMapper() }
-
-    private val questions: List<ListItem>
-        get() = listItemsLiveData.value?.filterIsInstance<Question>() ?: emptyList()
 
     private var job: Job? = null
 
     // region public functions
     fun loadFirstPageQuestions() {
         throttleApiCall {
-            loadingLiveData.postValue(true)
             val result = getQuestionsUseCase.loadFirstPage()
             handleQuestionListResult(result)
         }
@@ -63,7 +58,7 @@ class QuestionListViewModel(
             handleQuestionListResult(getQuestionsUseCase.retry())
         }
     }
-// endregion public functions
+    // endregion public functions
 
     private suspend fun handleQuestionListResult(result: QuestionsFetchResult) {
         when (result) {
@@ -80,35 +75,39 @@ class QuestionListViewModel(
                 mapAndPostQuestions(result.data)
             }
         }
-
-        loadingLiveData.postValue(false)
     }
 
     // region post functions
     private suspend fun mapAndPostQuestions(schemas: List<QuestionSchema>) {
         val questions = schemas.map { schema -> questionMapper.convert(schema) }
-        postListItems(questions)
+        postQuestions(questions)
     }
 
     private fun postLoadMoreLoading() {
-        postListItems(questions.plus(LoadingState(isLoading = true)))
+        postLoadMore(isLoading = true)
     }
 
     private fun postLoadQuestionsError(th: Throwable) {
         val str = throwableToStr(th)
-        postListItems(questions.plus(LoadingState(message = str, isRetry = true)))
+        postLoadMore(message = str, isRetry = true)
     }
 
     private fun postEmptyDataItem() {
-        val loadingState = LoadingState(message = Str.from(R.string.message_empty_items))
-        postListItems(questions.plus(loadingState))
+        postLoadMore(message = Str.from(R.string.message_empty_items))
     }
 
     private fun postNoMoreDataItem() {
-        val loadingState = LoadingState(message = Str.from(R.string.message_no_more_items))
-        postListItems(questions.plus(loadingState))
+        postLoadMore(message = Str.from(R.string.message_no_more_items))
     }
-// endregion post functions
+
+    private fun postLoadMore(
+        isLoading: Boolean = false,
+        message: Str? = null,
+        isRetry: Boolean = false
+    ) {
+        loadingLiveData.postValue(listOf(LoadingState(isLoading = isLoading, message = message, isRetry = isRetry)))
+    }
+    // endregion post functions
 
     // region private helper functions
     private fun throttleApiCall(apiCall: suspend () -> Unit) {
@@ -118,8 +117,8 @@ class QuestionListViewModel(
         }
     }
 
-    private fun postListItems(items: List<ListItem>) {
-        listItemsLiveData.postValue(items)
+    private fun postQuestions(items: List<Question>) {
+        questionsLiveData.postValue(items)
     }
 
     private fun throwableToStr(th: Throwable): Str {
