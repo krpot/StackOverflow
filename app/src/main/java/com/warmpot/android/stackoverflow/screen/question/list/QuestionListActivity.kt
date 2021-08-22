@@ -13,6 +13,7 @@ import com.warmpot.android.stackoverflow.screen.common.recyclerview.RecyclerView
 import com.warmpot.android.stackoverflow.screen.question.details.QuestionDetailsActivity
 import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionAdapter
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
+import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewState
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.utils.RecyclerViewDivider
 import com.warmpot.android.stackoverflow.utils.hide
@@ -90,12 +91,11 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel.loading.observe(this) { loadingStates ->
-            handleLoadMore(loadingStates)
-        }
-
-        viewModel.questions.observe(this) { questions ->
-            handleQuestionFetched(questions)
+        viewModel.observe(this) { viewState ->
+            when (viewState) {
+                is QuestionListViewState.Loading -> handleLoadMore(viewState.data)
+                is QuestionListViewState.ListItem -> handleQuestionFetched(viewState.data)
+            }
         }
     }
 

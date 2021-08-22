@@ -1,9 +1,6 @@
 package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionsUseCase
@@ -22,14 +19,17 @@ class QuestionListViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase
 ) : ViewModel() {
 
-    private val questionsLiveData = MutableLiveData<List<Question>>()
-    val questions: LiveData<List<Question>> get() = questionsLiveData
-    private val loadingLiveData = MutableLiveData<List<LoadingState>>()
-    val loading: LiveData<List<LoadingState>> get() = loadingLiveData
+    private val questionsLiveData = MutableLiveData<QuestionListViewState.ListItem>()
+    private val loadingLiveData = MutableLiveData<QuestionListViewState.Loading>()
 
     private val questionMapper by lazy { QuestionMapper() }
 
     private var job: Job? = null
+
+    fun observe(owner: LifecycleOwner, onChange: (QuestionListViewState) -> Unit) {
+        questionsLiveData.observe(owner, Observer(onChange))
+        loadingLiveData.observe(owner, Observer(onChange))
+    }
 
     // region public functions
     fun loadFirstPageQuestions() {
@@ -105,7 +105,7 @@ class QuestionListViewModel(
         message: Str? = null,
         isRetry: Boolean = false
     ) {
-        loadingLiveData.postValue(listOf(LoadingState(isLoading = isLoading, message = message, isRetry = isRetry)))
+        loadingLiveData.postValue(stateOf(LoadingState(isLoading = isLoading, message = message, isRetry = isRetry)))
     }
     // endregion post functions
 
@@ -118,7 +118,7 @@ class QuestionListViewModel(
     }
 
     private fun postQuestions(items: List<Question>) {
-        questionsLiveData.postValue(items)
+        questionsLiveData.postValue(stateOf(items))
     }
 
     private fun throwableToStr(th: Throwable): Str {
