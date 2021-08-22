@@ -15,6 +15,8 @@ import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionAd
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewState
 import com.warmpot.android.stackoverflow.screen.question.model.Question
+import com.warmpot.android.stackoverflow.screen.user.UserActivity
+import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.RecyclerViewDivider
 import com.warmpot.android.stackoverflow.utils.hide
 import com.warmpot.android.stackoverflow.utils.viewModel
@@ -59,6 +61,12 @@ class QuestionListActivity : AppCompatActivity() {
                 lastItemClicked = System.currentTimeMillis()
             }
 
+            questionAdapter.onUserClicked { user ->
+                if (System.currentTimeMillis() - lastItemClicked < 1000L) return@onUserClicked
+                navigateToUser(user)
+                lastItemClicked = System.currentTimeMillis()
+            }
+
             loadingStateAdapter.onRetryClicked {
                 viewModel.loadMoreRetryClicked()
             }
@@ -72,6 +80,12 @@ class QuestionListActivity : AppCompatActivity() {
     private fun navigateToDetails(question: Question) {
         val intent = Intent(this, QuestionDetailsActivity::class.java)
         intent.putExtra(IntentConstant.INTENT_PARAM_KEY, question)
+        startActivity(intent)
+    }
+
+    private fun navigateToUser(user: User) {
+        val intent = Intent(this, UserActivity::class.java)
+        intent.putExtra(IntentConstant.INTENT_PARAM_KEY, user.userId)
         startActivity(intent)
     }
 

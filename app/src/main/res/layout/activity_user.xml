@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/spacing_lg"
+    tools:context=".screen.user.UserActivity">
+
+    <ImageView
+        android:id="@+id/photoImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/owner_photo"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/displayNameTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/photoImg"
+        tools:text="@tools:sample/full_names" />
+
+    <TextView
+        android:id="@+id/aboutMeTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:textAppearance="?attr/textAppearanceCaption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/displayNameTxt"
+        tools:text="@tools:sample/full_names" />
+
+    <TextView
+        android:id="@+id/locationTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:textAppearance="?attr/textAppearanceCaption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/aboutMeTxt"
+        tools:text="@tools:sample/full_names" />
+
+    <TextView
+        android:id="@+id/websiteTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:textAppearance="?attr/textAppearanceCaption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationTxt"
+        tools:text="@tools:sample/full_names" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:divider="?attr/dividerVertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/spacing_lg"
+        android:showDividers="middle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/websiteTxt">
+
+        <TextView
+            android:id="@+id/goldBadgeCountTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintEnd_toStartOf="@id/silverBadgeCountTxt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/websiteTxt"
+            tools:text="9\nGold badges" />
+
+        <TextView
+            android:id="@+id/silverBadgeCountTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintEnd_toStartOf="@id/bronzeBadgeCountTxt"
+            app:layout_constraintStart_toEndOf="@id/goldBadgeCountTxt"
+            app:layout_constraintTop_toTopOf="@id/goldBadgeCountTxt"
+            tools:text="57\nSilver badges" />
+
+        <TextView
+            android:id="@+id/bronzeBadgeCountTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/silverBadgeCountTxt"
+            app:layout_constraintTop_toTopOf="@id/goldBadgeCountTxt"
+            tools:text="110\nBronze badges" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

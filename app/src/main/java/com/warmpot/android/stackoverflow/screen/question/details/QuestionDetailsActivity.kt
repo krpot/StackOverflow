@@ -1,6 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.question.details
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.webkit.WebView
@@ -14,6 +15,8 @@ import com.warmpot.android.stackoverflow.databinding.ActivityQuestionDetailsBind
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.model.Question
+import com.warmpot.android.stackoverflow.screen.user.UserActivity
+import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.toHtml
 import com.warmpot.android.stackoverflow.utils.viewModel
 
@@ -80,12 +83,23 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         viewModel.question.observe(this) { question ->
-            binding.titleTxt.text = question.title.toHtml()
-            binding.answerCountTxt.text = getString(R.string.question_answer_fmt, question.answerCount)
-            binding.commentCountTxt.text = getString(R.string.question_comment_fmt, question.commentCount)
-            binding.createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
-            binding.webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
-            binding.ownerTxt.text = question.owner?.displayName
+            binding.apply {
+                titleTxt.text = question.title.toHtml()
+                answerCountTxt.text = getString(R.string.question_answer_fmt, question.answerCount)
+                commentCountTxt.text = getString(R.string.question_comment_fmt, question.commentCount)
+                createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
+                webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
+                ownerTxt.text = question.owner.displayName
+                ownerTxt.setOnClickListener {
+                    navigateToUser(question.owner)
+                }
+            }
         }
+    }
+
+    private fun navigateToUser(user: User) {
+        val intent = Intent(this, UserActivity::class.java)
+        intent.putExtra(IntentConstant.INTENT_PARAM_KEY, user.userId)
+        startActivity(intent)
     }
 }

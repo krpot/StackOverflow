@@ -26,7 +26,7 @@ data class QuestionSchema(
     val link: String = "",
 
     @SerializedName("owner")
-    val owner: OwnerSchema? = null,
+    val owner: UserSchema,
 
     @SerializedName("answer_count")
     val answerCount: Int = 0,

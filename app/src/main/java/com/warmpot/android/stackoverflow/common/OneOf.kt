@@ -17,6 +17,20 @@ fun <T> OneOf<T>.onSuccess(action: (T) -> Unit) {
     }
 }
 
+fun <T, R> OneOf<T>.map(transform: (T) -> R): OneOf<R> {
+    return when (this) {
+        is OneOf.Error -> this
+        is OneOf.Success -> OneOf.Success(transform(this.data))
+    }
+}
+
+fun <T, R> OneOf<T>.switchMap(transform: (T) -> OneOf<R>): OneOf<R> {
+    return when (this) {
+        is OneOf.Error -> this
+        is OneOf.Success -> transform(this.data)
+    }
+}
+
 suspend fun <T> tryOneOf(action: suspend () -> T): OneOf<T> {
     return try {
         OneOf.Success(action())

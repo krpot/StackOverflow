@@ -3,7 +3,7 @@ package com.warmpot.android.stackoverflow.screen.question.model
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.EpochSecond
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
-import com.warmpot.android.stackoverflow.screen.user.model.Owner
+import com.warmpot.android.stackoverflow.screen.user.model.User
 import java.io.Serializable
 
 
@@ -15,7 +15,7 @@ data class Question(
     val lastActivityDate: EpochSecond,
     val lastEditDate: EpochSecond,
     val link: String = "",
-    val owner: Owner? = null,
+    val owner: User,
     val answerCount: Int = 0,
     val commentCount: Int = 0,
     val score: Int = 0,

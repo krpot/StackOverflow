@@ -5,13 +5,13 @@ import com.warmpot.android.stackoverflow.common.EpochSecond
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.domain.utils.StackoverflowHtmlParser
 import com.warmpot.android.stackoverflow.screen.question.model.Question
-import com.warmpot.android.stackoverflow.screen.user.mapper.OwnerMapper
+import com.warmpot.android.stackoverflow.screen.user.mapper.UserMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class QuestionMapper : AsyncMapper<QuestionSchema, Question> {
 
-    private val ownerMapper by lazy { OwnerMapper() }
+    private val ownerMapper by lazy { UserMapper() }
 
     override suspend fun convert(src: QuestionSchema): Question = withContext(Dispatchers.IO) {
         src.run {
@@ -23,7 +23,7 @@ class QuestionMapper : AsyncMapper<QuestionSchema, Question> {
                 lastActivityDate = EpochSecond(lastActivityDate),
                 lastEditDate = EpochSecond(lastEditDate),
                 link = link,
-                owner = src.owner?.let { ownerMapper.convert(it) },
+                owner = ownerMapper.convert(src.owner),
                 answerCount = answerCount,
                 commentCount = commentCount,
                 score = score,

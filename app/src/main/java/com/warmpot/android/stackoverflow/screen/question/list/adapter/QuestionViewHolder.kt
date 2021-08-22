@@ -5,11 +5,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.common.agoText
 import com.warmpot.android.stackoverflow.databinding.RowQuestionBinding
 import com.warmpot.android.stackoverflow.screen.question.model.Question
+import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.toHtml
 
 class QuestionViewHolder(
     itemView: View,
-    private val itemClicked: ((Question) -> Unit)?
+    private val itemClicked: ((Question) -> Unit)?,
+    private val ownerClicked: ((User) -> Unit)?
 ) : RecyclerView.ViewHolder(itemView) {
 
     private val binding = RowQuestionBinding.bind(itemView)
@@ -21,7 +23,10 @@ class QuestionViewHolder(
             titleTxt.text = item.title.toHtml()
             tagTxt.text = item.tags.joinToString(" ᐧ ")
             lastActivityDateTxt.text = item.lastActivityDate.agoText()
-            ownerTxt.text = item.owner?.displayName.toHtml()
+            ownerTxt.text = item.owner.displayName.toHtml()
+            ownerTxt.setOnClickListener {
+                ownerClicked?.invoke(item.owner)
+            }
         }
 
         itemView.setOnClickListener {
