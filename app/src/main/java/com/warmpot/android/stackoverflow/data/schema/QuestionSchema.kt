@@ -31,6 +31,9 @@ data class QuestionSchema(
     @SerializedName("answer_count")
     val answerCount: Int = 0,
 
+    @SerializedName("comment_count")
+    val commentCount: Int = 0,
+
     @SerializedName("score")
     val score: Int = 0,
 

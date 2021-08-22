@@ -17,6 +17,7 @@ data class Question(
     val link: String = "",
     val owner: Owner? = null,
     val answerCount: Int = 0,
+    val commentCount: Int = 0,
     val score: Int = 0,
     val upvoteCount: Int = 0,
     val viewCount: Int = 0,

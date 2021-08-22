@@ -7,6 +7,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.warmpot.android.stackoverflow.R
+import com.warmpot.android.stackoverflow.common.DateTimeFormatType
+import com.warmpot.android.stackoverflow.common.format
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionDetailsBinding
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
@@ -78,7 +81,11 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel.question.observe(this) { question ->
             binding.titleTxt.text = question.title.toHtml()
+            binding.answerCountTxt.text = getString(R.string.question_answer_fmt, question.answerCount)
+            binding.commentCountTxt.text = getString(R.string.question_comment_fmt, question.commentCount)
+            binding.createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
             binding.webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
+            binding.ownerTxt.text = question.owner?.displayName
         }
     }
 }

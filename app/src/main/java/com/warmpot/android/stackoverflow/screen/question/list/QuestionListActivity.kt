@@ -40,6 +40,7 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private lateinit var loadMoreListener: LoadMoreListener
+    private var lastItemClicked = 0L
 
     private fun setupViews() {
         binding.apply {
@@ -53,7 +54,9 @@ class QuestionListActivity : AppCompatActivity() {
             }
 
             questionAdapter.onItemClicked { question ->
+                if (System.currentTimeMillis() - lastItemClicked < 1000L) return@onItemClicked
                 navigateToDetails(question)
+                lastItemClicked = System.currentTimeMillis()
             }
 
             loadingStateAdapter.onRetryClicked {

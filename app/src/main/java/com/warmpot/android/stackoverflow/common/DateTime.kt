@@ -13,7 +13,9 @@ value class EpochSecond(
 
 enum class DateTimeFormatType(val pattern: String) {
     ddMMyyyy(pattern = "dd-MM-yyyy"),
-    ddMMyy(pattern = "dd-MM-yy")
+    ddMMyyyyHHmm(pattern = "dd-MM-yyyy HH:mm"),
+    ddMMyy(pattern = "dd-MM-yy"),
+    ddMMyyHHmm(pattern = "dd-MM-yy HH:mm");
 }
 
 fun EpochSecond.format(formatType: DateTimeFormatType = DateTimeFormatType.ddMMyyyy): String {

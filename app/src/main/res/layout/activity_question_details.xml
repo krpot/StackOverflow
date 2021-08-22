@@ -4,28 +4,82 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="@dimen/spacing_lg"
+    android:paddingTop="@dimen/spacing_lg"
     tools:context=".screen.question.list.QuestionListActivity">
 
     <TextView
         android:id="@+id/titleTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_lg"
-        android:paddingHorizontal="@dimen/spacing_lg"
         android:textAppearance="?attr/textAppearanceHeadline6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/createdDateTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceOverline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleTxt"
+        tools:text="@tools:sample/date/mmddyy" />
+
+    <View
+        android:id="@+id/titleDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:background="?android:attr/dividerVertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createdDateTxt" />
+
+    <TextView
+        android:id="@+id/answerCountTxt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/spacing_md"
+        android:paddingStart="0dp"
+        android:paddingEnd="@dimen/spacing_sm"
+        app:layout_constraintEnd_toStartOf="@id/commentCountTxt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleDivider"
+        tools:text="0 answers" />
+
+    <TextView
+        android:id="@+id/commentCountTxt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/spacing_sm"
+        android:paddingVertical="@dimen/spacing_md"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@id/ownerTxt"
+        app:layout_constraintStart_toEndOf="@id/answerCountTxt"
+        app:layout_constraintTop_toBottomOf="@id/titleDivider"
+        tools:text="0 comments" />
+
+    <TextView
+        android:id="@+id/ownerTxt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/spacing_md"
+        android:textAlignment="textEnd"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/commentCountTxt"
+        app:layout_constraintTop_toBottomOf="@id/titleDivider"
+        tools:text="@tools:sample/full_names" />
 
     <WebView
         android:id="@+id/webView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/spacing_lg"
-        android:layout_marginTop="@dimen/spacing_lg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleTxt" />
+        app:layout_constraintTop_toBottomOf="@id/answerCountTxt" />
 
     <ProgressBar
         android:id="@+id/loadingBar"

@@ -25,6 +25,7 @@ class QuestionMapper : AsyncMapper<QuestionSchema, Question> {
                 link = link,
                 owner = src.owner?.let { ownerMapper.convert(it) },
                 answerCount = answerCount,
+                commentCount = commentCount,
                 score = score,
                 upvoteCount = upvoteCount,
                 viewCount = viewCount,
