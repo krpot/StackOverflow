@@ -29,7 +29,7 @@ class QuestionMapper : AsyncMapper<QuestionSchema, Question> {
                 score = score,
                 upvoteCount = upvoteCount,
                 viewCount = viewCount,
-                tags = src.tags.take(3)
+                tags = src.tags
             )
         }
     }

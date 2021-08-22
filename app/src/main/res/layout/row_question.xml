@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="@dimen/row_default_vertical_padding"
-    tools:context=".screen.question.list.QuestionListActivity">
+    tools:context=".screen.question.list.QuestionListActivity"
+    tools:ignore="SmallSp">
 
     <TextView
         android:id="@+id/upvoteCountTxt"
@@ -43,18 +44,21 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem/random" />
 
-    <TextView
-        android:id="@+id/tagTxt"
-        android:layout_width="wrap_content"
+    <HorizontalScrollView
+        android:id="@+id/tagHScrollView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:background="?attr/colorSecondary"
-        android:maxLines="1"
-        android:paddingHorizontal="@dimen/spacing_sm"
-        android:paddingVertical="2dp"
-        app:layout_constraintStart_toStartOf="@+id/titleTxt"
-        app:layout_constraintTop_toBottomOf="@+id/titleTxt"
-        tools:text="jetpack-compose" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/titleTxt"
+        app:layout_constraintTop_toBottomOf="@+id/titleTxt">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/tagGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="@dimen/spacing_sm"
+            app:singleLine="true" />
+    </HorizontalScrollView>
 
     <TextView
         android:id="@+id/lastActivityDateTxt"
@@ -64,7 +68,7 @@
         android:alpha="0.7"
         android:textAppearance="?attr/textAppearanceCaption"
         app:layout_constraintStart_toStartOf="@id/titleTxt"
-        app:layout_constraintTop_toBottomOf="@+id/tagTxt"
+        app:layout_constraintTop_toBottomOf="@+id/tagHScrollView"
         tools:text="@tools:sample/lorem" />
 
     <TextView
@@ -81,7 +85,7 @@
         android:textColor="@android:color/holo_blue_dark"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/lastActivityDateTxt"
-        app:layout_constraintTop_toBottomOf="@+id/tagTxt"
+        app:layout_constraintTop_toBottomOf="@+id/tagHScrollView"
         tools:ignore="RtlSymmetry"
         tools:text="@tools:sample/date/mmddyy" />
 

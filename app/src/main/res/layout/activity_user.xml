@@ -7,17 +7,26 @@
     android:padding="@dimen/spacing_lg"
     tools:context=".screen.user.UserActivity">
 
-    <ImageView
-        android:id="@+id/photoImg"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:id="@+id/photoFrame"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/owner_photo"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+        android:layout_marginTop="@dimen/spacing_lg"
+        app:layout_constraintEnd_toEndOf="@id/endGuide"
+        app:layout_constraintStart_toStartOf="@id/startGuide"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/photoImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/owner_photo"
+            android:scaleType="centerCrop"
+            tools:src="@tools:sample/avatars" />
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/displayNameTxt"
@@ -27,7 +36,7 @@
         android:textAppearance="?attr/textAppearanceHeadline6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/photoImg"
+        app:layout_constraintTop_toBottomOf="@id/photoFrame"
         tools:text="@tools:sample/full_names" />
 
     <TextView
@@ -112,6 +121,20 @@
             tools:text="110\nBronze badges" />
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="56dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="56dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
