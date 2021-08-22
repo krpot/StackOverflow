@@ -1,21 +1,24 @@
 package com.warmpot.android.stackoverflow.screen.question.mapper
 
+import com.warmpot.android.stackoverflow.common.AsyncMapper
 import com.warmpot.android.stackoverflow.common.EpochSecond
-import com.warmpot.android.stackoverflow.common.Mapper
 import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
+import com.warmpot.android.stackoverflow.domain.utils.StackoverflowHtmlParser
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.mapper.OwnerMapper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class QuestionMapper : Mapper<QuestionSchema, Question> {
+class QuestionMapper : AsyncMapper<QuestionSchema, Question> {
 
     private val ownerMapper by lazy { OwnerMapper() }
 
-    override fun convert(src: QuestionSchema): Question {
-        return src.run {
+    override suspend fun convert(src: QuestionSchema): Question = withContext(Dispatchers.IO) {
+        src.run {
             Question(
                 questionId = questionId,
                 title = title,
-                body = body ?: "",
+                body = getHtmlContent(src.body),
                 creationDate = EpochSecond(creationDate),
                 lastActivityDate = EpochSecond(lastActivityDate),
                 lastEditDate = EpochSecond(lastEditDate),
@@ -28,5 +31,11 @@ class QuestionMapper : Mapper<QuestionSchema, Question> {
                 tags = src.tags.take(3)
             )
         }
+    }
+
+    private fun getHtmlContent(body: String?): String {
+        return body?.let { s ->
+            StackoverflowHtmlParser.parseQuestionBodyHtml(s)
+        } ?: ""
     }
 }

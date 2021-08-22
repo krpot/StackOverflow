@@ -53,6 +53,8 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     implementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
 
+    implementation "org.jsoup:jsoup:1.11.1"
+
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"
 }

@@ -65,7 +65,7 @@ class QuestionListViewModel(
     }
 // endregion public functions
 
-    private fun handleQuestionListResult(result: QuestionsFetchResult) {
+    private suspend fun handleQuestionListResult(result: QuestionsFetchResult) {
         when (result) {
             is QuestionsFetchResult.Failure -> {
                 postLoadQuestionsError(result.e)
@@ -85,7 +85,7 @@ class QuestionListViewModel(
     }
 
     // region post functions
-    private fun mapAndPostQuestions(schemas: List<QuestionSchema>) {
+    private suspend fun mapAndPostQuestions(schemas: List<QuestionSchema>) {
         val questions = schemas.map { schema -> questionMapper.convert(schema) }
         postListItems(questions)
     }

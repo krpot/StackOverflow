@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionDetailsBinding
@@ -13,6 +12,7 @@ import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.Quest
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.utils.toHtml
 import com.warmpot.android.stackoverflow.utils.viewModel
+
 
 class QuestionDetailsActivity : AppCompatActivity() {
 
@@ -35,13 +35,15 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private fun setupViews() {
         binding.apply {
             webView.settings.javaScriptEnabled = true
-            webView.webChromeClient = object: WebChromeClient() {
+            webView.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                    if (newProgress >= 70) {
+                    if (newProgress >= 90) {
                         loadingBar.isVisible = false
                     }
                 }
             }
+            //webView.setPadding(0, 0, 0, 0);
+            //webView.setInitialScale(getScale());
         }
     }
 
@@ -52,7 +54,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         viewModel.question.observe(this) { question ->
-            binding.webView.loadUrl(question.link)
+            binding.titleTxt.text = question.title.toHtml()
+            binding.webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
         }
 
         viewModel.loading.observe(this) { visible ->

@@ -26,10 +26,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".screen.question.details.QuestionDetailsActivity"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-            />
+        <activity android:name=".screen.question.details.QuestionDetailsActivity" />
     </application>
 
 </manifest>

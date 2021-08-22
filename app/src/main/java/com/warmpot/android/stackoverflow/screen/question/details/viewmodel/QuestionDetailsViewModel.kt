@@ -41,7 +41,7 @@ class QuestionDetailsViewModel(
     }
     // endregion public functions
 
-    private fun handleQuestionResult(result: QuestionFetchResult) {
+    private suspend fun handleQuestionResult(result: QuestionFetchResult) {
         when (result) {
             is QuestionFetchResult.Failure -> {
                 postLoadQuestionsError(result.e)
@@ -58,7 +58,7 @@ class QuestionDetailsViewModel(
     }
 
     // region post functions
-    private fun mapAndPostQuestions(schema: QuestionSchema) {
+    private suspend fun mapAndPostQuestions(schema: QuestionSchema) {
         val question = questionMapper.convert(schema)
         questionLiveData.postValue(question)
     }
