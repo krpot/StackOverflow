@@ -8,6 +8,7 @@ import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserViewModel
 import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserViewState
+import com.warmpot.android.stackoverflow.utils.circle
 import com.warmpot.android.stackoverflow.utils.viewModel
 
 class UserActivity : AppCompatActivity() {
@@ -52,6 +53,7 @@ class UserActivity : AppCompatActivity() {
 
     private fun bindUser(user: User) {
         binding.apply {
+            photoImg.circle(user.profileImage)
             displayNameTxt.text = user.displayName
             aboutMeTxt.text = user.aboutMe
             locationTxt.text = user.location
