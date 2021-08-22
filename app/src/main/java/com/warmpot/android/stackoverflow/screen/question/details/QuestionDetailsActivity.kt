@@ -2,8 +2,9 @@ package com.warmpot.android.stackoverflow.screen.question.details
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.webkit.WebChromeClient
+import android.view.MenuItem
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionDetailsBinding
@@ -30,20 +31,42 @@ class QuestionDetailsActivity : AppCompatActivity() {
         loadQuestion()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (backPressedByWebView()) return
+        super.onBackPressed()
+    }
+
+    private fun backPressedByWebView(): Boolean {
+        binding.webView.apply {
+            if (canGoBack()) {
+                goBack()
+                return true
+            }
+        }
+
+        return false
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupViews() {
         binding.apply {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
             webView.settings.javaScriptEnabled = true
-            webView.webChromeClient = object : WebChromeClient() {
-                override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                    if (newProgress >= 90) {
-                        loadingBar.isVisible = false
-                    }
+            webView.webViewClient = object : WebViewClient() {
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+                    loadingBar.isVisible = false
                 }
             }
-            //webView.setPadding(0, 0, 0, 0);
-            //webView.setInitialScale(getScale());
         }
     }
 
@@ -56,10 +79,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
         viewModel.question.observe(this) { question ->
             binding.titleTxt.text = question.title.toHtml()
             binding.webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
-        }
-
-        viewModel.loading.observe(this) { visible ->
-
         }
     }
 }

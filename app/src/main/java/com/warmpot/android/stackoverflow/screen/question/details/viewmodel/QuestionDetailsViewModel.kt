@@ -24,8 +24,6 @@ class QuestionDetailsViewModel(
 
     private val questionLiveData = MutableLiveData<Question>()
     val question: LiveData<Question> get() = questionLiveData
-    private val loadingLiveData = MutableLiveData(false)
-    val loading: LiveData<Boolean> get() = loadingLiveData
 
     private val questionMapper by lazy { QuestionMapper() }
 
@@ -34,7 +32,6 @@ class QuestionDetailsViewModel(
     // region public functions
     fun fetch(questionId: Int) {
         throttleApiCall {
-            loadingLiveData.postValue(true)
             val result = getQuestionUseCase.fetch(questionId)
             handleQuestionResult(result)
         }
@@ -53,8 +50,6 @@ class QuestionDetailsViewModel(
                 mapAndPostQuestions(result.data)
             }
         }
-
-        loadingLiveData.postValue(false)
     }
 
     // region post functions
@@ -70,11 +65,6 @@ class QuestionDetailsViewModel(
 
     private fun postEmptyDataItem() {
         val loadingState = LoadingState(message = Str.from(R.string.message_empty_items))
-        //postListItems(questions.plus(loadingState))
-    }
-
-    private fun postNoMoreDataItem() {
-        val loadingState = LoadingState(message = Str.from(R.string.message_no_more_items))
         //postListItems(questions.plus(loadingState))
     }
     // endregion post functions
