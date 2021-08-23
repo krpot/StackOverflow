@@ -15,7 +15,7 @@ interface StackoverflowApi {
     @GET("questions/{ids}?key=${STACKOVERFLOW_API_KEY}&order=desc&sort=activity&site=stackoverflow&filter=withbody")
     suspend fun getQuestion(@Path("ids") id: Int): QuestionsResponse
 
-    @GET("questions/{ids}/answers?key=${STACKOVERFLOW_API_KEY}&order=desc&sort=activity&site=stackoverflow&filter=withbody")
+    @GET("questions/{ids}/answers?key=${STACKOVERFLOW_API_KEY}&order=desc&sort=activity&site=stackoverflow&filter=!6VvPDzQn3R(Hu")
     suspend fun getQuestionAnswers(@Path("ids") id: Int): AnswersResponse
 
     @GET("users/{ids}?key=${STACKOVERFLOW_API_KEY}&order=desc&sort=reputation&site=stackoverflow&filter=!6VvPDzOWTBANI")

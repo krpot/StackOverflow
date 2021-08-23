@@ -7,7 +7,9 @@ import android.view.MenuItem
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.google.android.material.tabs.TabLayoutMediator
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.DateTimeFormatType
 import com.warmpot.android.stackoverflow.common.format
@@ -16,6 +18,7 @@ import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewState
+import com.warmpot.android.stackoverflow.screen.question.details.viewpager.QuestionDetailsViewPagerAdapter
 import com.warmpot.android.stackoverflow.screen.question.model.Answer
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.UserActivity
@@ -105,15 +108,37 @@ class QuestionDetailsActivity : AppCompatActivity() {
             answerCountTxt.text = getString(R.string.question_answer_fmt, question.answerCount)
             commentCountTxt.text = getString(R.string.question_comment_fmt, question.commentCount)
             createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
-            webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
+            //webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
             ownerTxt.text = question.owner.displayName
             ownerTxt.setOnClickListener {
                 navigateToUser(question.owner)
             }
         }
+
+        setupViewPager(question)
+
+        binding.loadingBar.isVisible = false
     }
 
     private fun bindAnswers(answers: List<Answer>) {
+    }
+
+    private fun setupViewPager(question: Question) {
+        binding.apply {
+            val pagerAdapter = QuestionDetailsViewPagerAdapter(this@QuestionDetailsActivity, question)
+            detailsPager.adapter = pagerAdapter
+            detailsPager.isUserInputEnabled = false
+            TabLayoutMediator(detailsTabs, detailsPager) { tab, position ->
+                tab.text = getString(pagerAdapter.tabTitleId(position))
+
+                if (position == 1 && question.answerCount > 0) {
+                    val badge = tab.orCreateBadge
+                    badge.backgroundColor = ContextCompat.getColor(detailsTabs.context, R.color.design_default_color_primary)
+                    badge.isVisible = true
+                    badge.number = question.answerCount
+                }
+            }.attach()
+        }
     }
 
     private fun navigateToUser(user: User) {
