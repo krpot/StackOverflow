@@ -11,9 +11,16 @@ import com.warmpot.android.stackoverflow.utils.toHtml
 
 class QuestionViewHolder(
     itemView: View,
-    private val itemClicked: ((Question) -> Unit)?,
-    private val ownerClicked: ((User) -> Unit)?
+    listener: Listener?
 ) : RecyclerView.ViewHolder(itemView) {
+
+    interface Listener {
+        fun onItemClicked(question: Question)
+        fun onOwnerClicked(user: User)
+        fun onTagClicked(tag: String)
+    }
+
+    private var _listener: Listener? = listener
 
     private val binding = RowQuestionBinding.bind(itemView)
 
@@ -25,14 +32,14 @@ class QuestionViewHolder(
             lastActivityDateTxt.text = item.lastActivityDate.agoText()
             ownerTxt.text = item.owner.displayName.toHtml()
             ownerTxt.setOnClickListener {
-                ownerClicked?.invoke(item.owner)
+                _listener?.onOwnerClicked(item.owner)
             }
-
-            bindTags(item.tags)
         }
 
+        bindTags(item.tags)
+
         itemView.setOnClickListener {
-            itemClicked?.invoke(item)
+            _listener?.onItemClicked(item)
         }
     }
 
@@ -41,6 +48,9 @@ class QuestionViewHolder(
             for (tag in tags) {
                 val chip = Chip(context)
                 chip.text = tag
+                chip.setOnClickListener {
+                    _listener?.onTagClicked(tag)
+                }
                 addView(chip)
             }
         }

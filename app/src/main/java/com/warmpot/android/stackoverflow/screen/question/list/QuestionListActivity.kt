@@ -8,10 +8,12 @@ import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
 import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
 import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingStateAdapter
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.listener.FastClickHandler
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.RecyclerViewHelper
 import com.warmpot.android.stackoverflow.screen.question.details.QuestionDetailsActivity
 import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionAdapter
+import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionViewHolder
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewState
 import com.warmpot.android.stackoverflow.screen.question.model.Question
@@ -30,6 +32,8 @@ class QuestionListActivity : AppCompatActivity() {
     private val loadingStateAdapter by lazy { LoadingStateAdapter() }
     private val questionAdapter by lazy { QuestionAdapter() }
     private val concatAdapter by lazy { ConcatAdapter(questionAdapter, loadingStateAdapter) }
+
+    private val fastClickHandler by lazy { FastClickHandler() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,16 +59,18 @@ class QuestionListActivity : AppCompatActivity() {
                 loadMoreListener = requireNotNull(helper.loadMoreListener)
             }
 
-            questionAdapter.onItemClicked { question ->
-                if (System.currentTimeMillis() - lastItemClicked < 1000L) return@onItemClicked
-                navigateToDetails(question)
-                lastItemClicked = System.currentTimeMillis()
-            }
+            questionAdapter.listener = object : QuestionViewHolder.Listener {
+                override fun onItemClicked(question: Question) {
+                    questionClicked(question)
+                }
 
-            questionAdapter.onUserClicked { user ->
-                if (System.currentTimeMillis() - lastItemClicked < 1000L) return@onUserClicked
-                navigateToUser(user)
-                lastItemClicked = System.currentTimeMillis()
+                override fun onOwnerClicked(user: User) {
+                    ownerClicked(user)
+                }
+
+                override fun onTagClicked(tag: String) {
+                    tagClicked(tag)
+                }
             }
 
             loadingStateAdapter.onRetryClicked {
@@ -74,6 +80,25 @@ class QuestionListActivity : AppCompatActivity() {
             swipeRefresh.setOnRefreshListener {
                 pullToRefresh()
             }
+        }
+    }
+
+    private fun tagClicked(tag: String) {
+        // TODO : Open tag activity
+        fastClickHandler.performClick {
+
+        }
+    }
+
+    private fun ownerClicked(user: User) {
+        fastClickHandler.performClick {
+            navigateToUser(user)
+        }
+    }
+
+    private fun questionClicked(question: Question) {
+        fastClickHandler.performClick {
+            navigateToDetails(question)
         }
     }
 
