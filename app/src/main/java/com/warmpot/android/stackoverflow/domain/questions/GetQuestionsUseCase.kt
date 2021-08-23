@@ -1,9 +1,9 @@
-package com.warmpot.android.stackoverflow.domain.usecase
+package com.warmpot.android.stackoverflow.domain.questions
 
 import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.tryOneOf
-import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
-import com.warmpot.android.stackoverflow.data.schema.QuestionsResponse
+import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
+import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,23 +16,23 @@ class GetQuestionsUseCase(
     private var page: Int = 1
     private var hasMoreData = false
 
-    private suspend fun fetchQuestions(page: Int): QuestionsFetchResult =
+    private suspend fun execute(page: Int): QuestionsFetchResult =
         withContext(Dispatchers.IO) {
             getQuestionsBy(page)
         }
 
-    suspend fun loadFirstPage() = fetchQuestions(1)
+    suspend fun loadFirstPage() = execute(1)
 
     suspend fun loadNext(): QuestionsFetchResult {
-        return fetchQuestions(nextPage())
+        return execute(nextPage())
     }
 
     suspend fun refresh(): QuestionsFetchResult {
         cache.clear()
-        return fetchQuestions(page = this.page)
+        return execute(page = this.page)
     }
 
-    suspend fun retry() = fetchQuestions(page = this.page)
+    suspend fun retry() = execute(page = this.page)
 
     private suspend fun getQuestionsBy(page: Int): QuestionsFetchResult {
         return when (val result = tryOneOf { stackOverflowApi.getQuestions(page) }) {

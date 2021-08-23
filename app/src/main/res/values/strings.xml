@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ExtraTranslation">
     <string name="app_name">StackOverflow</string>
     <string name="question_votes_fmt">%1$d votes</string>
     <string name="question_answer_fmt">%1$d answers</string>
@@ -11,4 +11,6 @@
     <string name="retry_button_caption">Retry</string>
     <string name="close_button_caption">Retry</string>
     <string name="owner_photo">Owner\'s photo</string>
+    <string name="error_question_load_failure">Cannot load question details. Pleas try it later.</string>
+    <string name="user_activity_title">Profile</string>
 </resources>

@@ -1,9 +1,9 @@
-package com.warmpot.android.stackoverflow.domain.usecase
+package com.warmpot.android.stackoverflow.domain.users
 
 import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.map
 import com.warmpot.android.stackoverflow.common.tryOneOf
-import com.warmpot.android.stackoverflow.data.schema.UserResponse
+import com.warmpot.android.stackoverflow.data.schema.users.UserResponse
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

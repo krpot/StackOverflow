@@ -1,7 +1,8 @@
-package com.warmpot.android.stackoverflow.data.schema
+package com.warmpot.android.stackoverflow.data.schema.qustions
 
 
 import com.google.gson.annotations.SerializedName
+import com.warmpot.android.stackoverflow.data.schema.users.UserSchema
 
 data class QuestionSchema(
     @SerializedName("question_id")

@@ -13,7 +13,10 @@ import com.warmpot.android.stackoverflow.common.DateTimeFormatType
 import com.warmpot.android.stackoverflow.common.format
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionDetailsBinding
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
+import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewState
+import com.warmpot.android.stackoverflow.screen.question.model.Answer
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.UserActivity
 import com.warmpot.android.stackoverflow.screen.user.model.User
@@ -82,19 +85,35 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel.question.observe(this) { question ->
-            binding.apply {
-                titleTxt.text = question.title.toHtml()
-                answerCountTxt.text = getString(R.string.question_answer_fmt, question.answerCount)
-                commentCountTxt.text = getString(R.string.question_comment_fmt, question.commentCount)
-                createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
-                webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
-                ownerTxt.text = question.owner.displayName
-                ownerTxt.setOnClickListener {
-                    navigateToUser(question.owner)
-                }
+        viewModel.viewState.observe(this) { viewState ->
+            bindViewState(viewState)
+        }
+    }
+
+    private fun bindViewState(viewState: QuestionDetailsViewState) {
+        viewState.error?.also { bindError(it) }
+        viewState.question?.also { bindQuestion(it) }
+        viewState.answers?.also { bindAnswers(it) }
+    }
+
+    private fun bindError(error: Str) {
+    }
+
+    private fun bindQuestion(question: Question) {
+        binding.apply {
+            titleTxt.text = question.title.toHtml()
+            answerCountTxt.text = getString(R.string.question_answer_fmt, question.answerCount)
+            commentCountTxt.text = getString(R.string.question_comment_fmt, question.commentCount)
+            createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
+            webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
+            ownerTxt.text = question.owner.displayName
+            ownerTxt.setOnClickListener {
+                navigateToUser(question.owner)
             }
         }
+    }
+
+    private fun bindAnswers(answers: List<Answer>) {
     }
 
     private fun navigateToUser(user: User) {

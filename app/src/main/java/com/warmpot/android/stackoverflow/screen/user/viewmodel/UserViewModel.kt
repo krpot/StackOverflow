@@ -8,9 +8,9 @@ import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.onError
 import com.warmpot.android.stackoverflow.common.onSuccess
-import com.warmpot.android.stackoverflow.data.schema.UserSchema
-import com.warmpot.android.stackoverflow.domain.usecase.GetUserResult
-import com.warmpot.android.stackoverflow.domain.usecase.GetUserUseCase
+import com.warmpot.android.stackoverflow.data.schema.users.UserSchema
+import com.warmpot.android.stackoverflow.domain.users.GetUserResult
+import com.warmpot.android.stackoverflow.domain.users.GetUserUseCase
 import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.user.mapper.UserMapper

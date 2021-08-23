@@ -28,7 +28,9 @@
 
         <activity android:name=".screen.question.details.QuestionDetailsActivity" />
 
-        <activity android:name=".screen.user.UserActivity" />
+        <activity
+            android:name=".screen.user.UserActivity"
+            android:label="@string/user_activity_title" />
     </application>
 
 </manifest>

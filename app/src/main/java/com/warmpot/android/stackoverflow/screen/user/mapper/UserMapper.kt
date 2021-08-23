@@ -1,7 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.user.mapper
 
 import com.warmpot.android.stackoverflow.common.Mapper
-import com.warmpot.android.stackoverflow.data.schema.UserSchema
+import com.warmpot.android.stackoverflow.data.schema.users.UserSchema
 import com.warmpot.android.stackoverflow.screen.user.model.User
 
 class UserMapper : Mapper<UserSchema, User> {

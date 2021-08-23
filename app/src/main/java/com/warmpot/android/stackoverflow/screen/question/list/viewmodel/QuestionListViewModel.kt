@@ -2,18 +2,17 @@ package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
 
 import androidx.lifecycle.*
 import com.warmpot.android.stackoverflow.R
-import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
-import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionsUseCase
-import com.warmpot.android.stackoverflow.domain.usecase.QuestionsFetchResult
+import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
+import com.warmpot.android.stackoverflow.domain.questions.GetQuestionsUseCase
+import com.warmpot.android.stackoverflow.domain.questions.QuestionsFetchResult
 import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
+import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
 import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionMapper
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.net.UnknownHostException
 
 class QuestionListViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase
@@ -88,7 +87,7 @@ class QuestionListViewModel(
     }
 
     private fun postLoadQuestionsError(th: Throwable) {
-        val str = throwableToStr(th)
+        val str = th.toUiMessage()
         postLoadMore(message = str, isRetry = true)
     }
 
@@ -120,13 +119,5 @@ class QuestionListViewModel(
     private fun postQuestions(items: List<Question>) {
         questionsLiveData.postValue(stateOf(items))
     }
-
-    private fun throwableToStr(th: Throwable): Str {
-        return when (th) {
-            is UnknownHostException -> Str.from(R.string.error_no_connectivity)
-            is HttpException -> Str.from("${th.message()} (${th.code()})")
-            else -> Str.from(R.string.error_network_unavailable)
-        }
-    }
-// endregion private helper functions
+    // endregion private helper functions
 }

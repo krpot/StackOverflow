@@ -4,68 +4,38 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.warmpot.android.stackoverflow.R
-import com.warmpot.android.stackoverflow.data.schema.QuestionSchema
-import com.warmpot.android.stackoverflow.domain.usecase.GetQuestionUseCase
-import com.warmpot.android.stackoverflow.domain.usecase.QuestionFetchResult
-import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
+import com.warmpot.android.stackoverflow.common.OneOf
+import com.warmpot.android.stackoverflow.data.schema.answers.AnswersResponse
+import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
+import com.warmpot.android.stackoverflow.domain.questions.GetQuestionDetailsUseCase
 import com.warmpot.android.stackoverflow.screen.common.isActuallyActive
-import com.warmpot.android.stackoverflow.screen.common.resource.Str
-import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionMapper
-import com.warmpot.android.stackoverflow.screen.question.model.Question
+import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionDetailsViewStateMapper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.net.UnknownHostException
 
 class QuestionDetailsViewModel(
-    private val getQuestionUseCase: GetQuestionUseCase
+    private val getQuestionDetailsUseCase: GetQuestionDetailsUseCase
 ) : ViewModel() {
 
-    private val questionLiveData = MutableLiveData<Question>()
-    val question: LiveData<Question> get() = questionLiveData
+    private val viewStateLiveData = MutableLiveData<QuestionDetailsViewState>()
+    val viewState: LiveData<QuestionDetailsViewState> get() = viewStateLiveData
 
-    private val questionMapper by lazy { QuestionMapper() }
+    private val viewStateMapper by lazy { QuestionDetailsViewStateMapper() }
 
     private var job: Job? = null
 
     // region public functions
     fun fetch(questionId: Int) {
         throttleApiCall {
-            val result = getQuestionUseCase.fetch(questionId)
+            val result = getQuestionDetailsUseCase.execute(questionId)
             handleQuestionResult(result)
         }
     }
     // endregion public functions
 
-    private suspend fun handleQuestionResult(result: QuestionFetchResult) {
-        when (result) {
-            is QuestionFetchResult.Failure -> {
-                postLoadQuestionsError(result.e)
-            }
-            is QuestionFetchResult.Empty -> {
-                postEmptyDataItem()
-            }
-            is QuestionFetchResult.HasData -> {
-                mapAndPostQuestions(result.data)
-            }
-        }
-    }
-
-    // region post functions
-    private suspend fun mapAndPostQuestions(schema: QuestionSchema) {
-        val question = questionMapper.convert(schema)
-        questionLiveData.postValue(question)
-    }
-
-    private fun postLoadQuestionsError(th: Throwable) {
-        val str = throwableToStr(th)
-        //postListItems(questions.plus(LoadingState(message = str, isRetry = true)))
-    }
-
-    private fun postEmptyDataItem() {
-        val loadingState = LoadingState(message = Str.from(R.string.message_empty_items))
-        //postListItems(questions.plus(loadingState))
+    private suspend fun handleQuestionResult(result: OneOf<Pair<QuestionsResponse, AnswersResponse>>) {
+        val viewState = viewStateMapper.convert(result)
+        viewStateLiveData.postValue(viewState)
     }
     // endregion post functions
 
@@ -76,13 +46,5 @@ class QuestionDetailsViewModel(
             apiCall()
         }
     }
-
-    private fun throwableToStr(th: Throwable): Str {
-        return when (th) {
-            is UnknownHostException -> Str.from(R.string.error_no_connectivity)
-            is HttpException -> Str.from("${th.message()} (${th.code()})")
-            else -> Str.from(R.string.error_network_unavailable)
-        }
-    }
-// endregion private helper functions
+    // endregion private helper functions
 }
