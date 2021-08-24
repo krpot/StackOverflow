@@ -22,6 +22,7 @@ data class Question(
     val upvoteCount: Int = 0,
     val viewCount: Int = 0,
     val tags: List<String> = emptyList(),
+    val answers: List<Answer> = emptyList(),
     override val viewType: Int = VIEW_TYPE
 ) : ListItem, Serializable {
     companion object {

@@ -31,7 +31,7 @@ class QuestionDetailsViewPagerAdapter(
     override fun createFragment(position: Int): Fragment {
         return when (PAGES[position]) {
             Pages.QUESTION -> DetailsFragment.create(question)
-            Pages.ANSWERS -> AnswersFragment()
+            Pages.ANSWERS -> AnswersFragment.create(question.answers)
             Pages.COMMENTS -> CommentsFragment()
         }
     }

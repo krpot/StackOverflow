@@ -27,7 +27,7 @@ class QuestionDetailsViewStateMapper :
                 } else {
                     val question = questionMapper.convert(questionsResponse.items.first())
                     val answers = answersResponse.items.map { answerMapper.convert(it) }
-                    QuestionDetailsViewState(question = question, answers = answers)
+                    QuestionDetailsViewState(question = question.copy(answers = answers))
                 }
             }
         }
