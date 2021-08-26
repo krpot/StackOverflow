@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.webkit.URLUtil
 import android.widget.FrameLayout
 import com.warmpot.android.stackoverflow.databinding.ViewMiniUserProfileBinding
+import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.circle
 
 const val DOT = "\u2022"
@@ -58,5 +59,13 @@ class MiniUserProfileView @JvmOverloads constructor(
         if (!URLUtil.isValidUrl(avatarUrl)) return
 
         binding.avatarImg.circle(avatarUrl)
+    }
+
+    fun bindUser(user: User) {
+        displayName = user.displayName
+        reputation = user.reputation
+        gold = user.badgeCounts?.gold ?: 0
+        silver = user.badgeCounts?.silver ?: 0
+        bronze = user.badgeCounts?.silver ?: 0
     }
 }

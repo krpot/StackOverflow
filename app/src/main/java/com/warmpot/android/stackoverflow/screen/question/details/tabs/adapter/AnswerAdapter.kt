@@ -44,8 +44,8 @@ class AnswerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(item: Answer) {
         binding.apply {
-            webView.loadDataWithBaseURL(null, item.body, "text/html", "utf-8", null)
-            ownerTxt.text = item.owner.displayName
+            profileView.bindUser(item.owner)
+            webView.loadData(item.body)
         }
     }
 
