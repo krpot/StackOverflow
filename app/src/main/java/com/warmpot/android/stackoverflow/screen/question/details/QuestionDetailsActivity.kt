@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.warmpot.android.stackoverflow.R
@@ -17,11 +16,13 @@ import com.warmpot.android.stackoverflow.databinding.FragmentCommentsBinding
 import com.warmpot.android.stackoverflow.databinding.FragmentDetailsBinding
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
+import com.warmpot.android.stackoverflow.screen.question.details.tabs.adapter.AnswerAdapter
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewState
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.UserActivity
 import com.warmpot.android.stackoverflow.screen.user.model.User
+import com.warmpot.android.stackoverflow.utils.colorRes
 import com.warmpot.android.stackoverflow.utils.toHtml
 import com.warmpot.android.stackoverflow.utils.viewModel
 
@@ -34,6 +35,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private val detailsBinding by lazy { FragmentDetailsBinding.inflate(layoutInflater) }
     private val answersBinding by lazy { FragmentAnswersBinding.inflate(layoutInflater) }
     private val commentsBinding by lazy { FragmentCommentsBinding.inflate(layoutInflater) }
+
+    private val answerAdapter by lazy { AnswerAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +91,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 }
             })
         }
+
+        answersBinding.apply {
+            answerRcv.adapter = answerAdapter
+        }
     }
 
     private fun loadQuestion() {
@@ -112,8 +119,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private fun bindQuestion(question: Question) {
         binding.apply {
             titleTxt.text = question.title.toHtml()
-            answerCountTxt.text = getString(R.string.question_answer_fmt, question.answerCount)
-            commentCountTxt.text = getString(R.string.question_comment_fmt, question.commentCount)
+            voteCountTxt.text = getString(R.string.question_votes_fmt, question.upvoteCount)
+            viewCountTxt.text = getString(R.string.question_views_fmt, question.viewCount)
             createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
             ownerTxt.text = question.owner.displayName
             ownerTxt.setOnClickListener {
@@ -121,22 +128,42 @@ class QuestionDetailsActivity : AppCompatActivity() {
             }
         }
 
-        setupViewPager(question)
+        bindDetailsPage(question)
+        bindAnswersBadge(question)
+        bindAnswerPage(question)
 
         binding.loadingBar.isVisible = false
     }
 
-    private fun setupViewPager(question: Question) {
+    private fun bindDetailsPage(question: Question) {
+        val owner = question.owner
+        detailsBinding.apply {
+            webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
+            //ownerTxt.text = owner.displayName
+            //avatarImg.circle(owner.profileImage)
+            val badges = owner.badgeCounts
+            ownerStatsView.displayName = owner.displayName
+            ownerStatsView.avatarUrl = owner.profileImage
+            ownerStatsView.reputation = owner.reputation
+            ownerStatsView.gold = badges?.gold ?: 0
+            ownerStatsView.silver = badges?.silver ?: 0
+            ownerStatsView.reputation = badges?.bronze ?: 0
+        }
+    }
+
+    private fun bindAnswersBadge(question: Question) {
         binding.apply {
             if (question.answerCount > 0) {
                 val badge = detailsTabs.getTabAt(1)!!.orCreateBadge
-                badge.backgroundColor = ContextCompat.getColor(detailsTabs.context, R.color.design_default_color_primary)
+                badge.backgroundColor = detailsTabs.context.colorRes(R.color.design_default_color_primary)
                 badge.isVisible = true
                 badge.number = question.answerCount
             }
         }
+    }
 
-        detailsBinding.webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
+    private fun bindAnswerPage(question: Question) {
+        answerAdapter.submitList(question.answers)
     }
 
     private fun navigateToUser(user: User) {

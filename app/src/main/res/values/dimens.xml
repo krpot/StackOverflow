@@ -8,4 +8,6 @@
     <dimen name="spacing_md">8dp</dimen>
     <dimen name="spacing_lg">16dp</dimen>
     <dimen name="spacing_xl">24dp</dimen>
+
+    <dimen name="stat_bullet_size">24sp</dimen>
 </resources>

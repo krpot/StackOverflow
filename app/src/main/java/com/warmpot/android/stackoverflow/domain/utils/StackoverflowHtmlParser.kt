@@ -18,11 +18,8 @@ private const val HTML_TEMPLATE = """
     <body class="no-message-slide question-single" cz-shortcut-listen="true">
         <main class="snippet-hidden">
             <div itemprop="mainEntity" itemscope="" >
-                <div class="question" id="question" data-questionid="68877836">
-                    <header class="-summary">
-                    </header>
-
-                    <div class="s-prose js-post-body" id="$DIV_ID" itemprop="text">
+                <div class="question" id="question">
+                    <div class="s-prose js-post-body" id="$DIV_ID">
                     </div><!-- / s-prose -->
                 </div>
             </div>

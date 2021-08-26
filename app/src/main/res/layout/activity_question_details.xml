@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="@dimen/spacing_lg"
     android:paddingTop="@dimen/spacing_lg"
     tools:context=".screen.question.list.QuestionListActivity">
 
@@ -12,6 +11,7 @@
         android:id="@+id/titleTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_lg"
         android:textAppearance="?attr/textAppearanceHeadline6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,28 +36,28 @@
         app:layout_constraintTop_toBottomOf="@id/createdDateTxt" />
 
     <TextView
-        android:id="@+id/answerCountTxt"
+        android:id="@+id/voteCountTxt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingVertical="@dimen/spacing_md"
         android:paddingStart="0dp"
         android:paddingEnd="@dimen/spacing_sm"
-        app:layout_constraintEnd_toStartOf="@id/commentCountTxt"
+        app:layout_constraintEnd_toStartOf="@id/viewCountTxt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleDivider"
-        tools:text="0 answers" />
+        tools:text="0 upvote" />
 
     <TextView
-        android:id="@+id/commentCountTxt"
+        android:id="@+id/viewCountTxt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/spacing_sm"
         android:paddingVertical="@dimen/spacing_md"
         android:textAlignment="center"
         app:layout_constraintEnd_toStartOf="@id/ownerTxt"
-        app:layout_constraintStart_toEndOf="@id/answerCountTxt"
+        app:layout_constraintStart_toEndOf="@id/voteCountTxt"
         app:layout_constraintTop_toBottomOf="@id/titleDivider"
-        tools:text="0 comments" />
+        tools:text="0 views" />
 
     <TextView
         android:id="@+id/ownerTxt"
@@ -68,7 +68,7 @@
         android:textColor="@android:color/holo_blue_dark"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/commentCountTxt"
+        app:layout_constraintStart_toEndOf="@id/viewCountTxt"
         app:layout_constraintTop_toBottomOf="@id/titleDivider"
         tools:text="@tools:sample/full_names" />
 

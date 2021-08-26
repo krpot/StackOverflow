@@ -16,6 +16,7 @@
     <string name="question_details_tab_title">Question</string>
     <string name="question_answers_tab_title">Answers</string>
     <string name="question_comments_tab_title">Comments</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

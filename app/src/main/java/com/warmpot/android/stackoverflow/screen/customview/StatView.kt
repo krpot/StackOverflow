@@ -1,7 +1,6 @@
 package com.warmpot.android.stackoverflow.screen.customview
 
 import android.content.Context
-import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -9,6 +8,7 @@ import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.utils.dpToPx
 
@@ -33,13 +33,7 @@ class StatView @JvmOverloads constructor(
         }
 
     init {
-        attrs?.also {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setTextAppearance(it.getIdAttributeResourceValue(R.style.TextAppearance_MaterialComponents_Headline6))
-            } else {
-                setTextAppearance(context, R.style.TextAppearance_MaterialComponents_Headline6)
-            }
-        }
+        TextViewCompat.setTextAppearance(this, R.style.TextAppearance_MaterialComponents_Headline6)
 
         this.setLineSpacing(8.dpToPx(context), 1f)
         this.textAlignment = TEXT_ALIGNMENT_CENTER
@@ -58,17 +52,6 @@ class StatView @JvmOverloads constructor(
             count.toString().length, str.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-//        val spannable = SpannableString("$count\n$s")
-//        spannable.setSpan(
-//            RelativeSizeSpan(0.5f),
-//            count.toString().length, spannable.length,
-//            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-//        )
-//        spannable.setSpan(
-//            ForegroundColorSpan(ContextCompat.getColor(context, R.color.material_on_background_disabled)),
-//            count.toString().length, spannable.length,
-//            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-//        )
         return sb
     }
 
