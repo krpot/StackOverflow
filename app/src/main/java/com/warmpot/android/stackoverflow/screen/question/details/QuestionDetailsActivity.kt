@@ -1,10 +1,8 @@
 package com.warmpot.android.stackoverflow.screen.question.details
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import com.warmpot.android.stackoverflow.R
@@ -14,6 +12,7 @@ import com.warmpot.android.stackoverflow.databinding.ActivityQuestionDetailsBind
 import com.warmpot.android.stackoverflow.databinding.FragmentAnswersBinding
 import com.warmpot.android.stackoverflow.databinding.FragmentCommentsBinding
 import com.warmpot.android.stackoverflow.databinding.FragmentDetailsBinding
+import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.customview.bindWith
@@ -21,12 +20,11 @@ import com.warmpot.android.stackoverflow.screen.question.details.tabs.adapter.An
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsUiState
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.model.Question
-import com.warmpot.android.stackoverflow.screen.user.UserActivity
 import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.*
 
 
-class QuestionDetailsActivity : AppCompatActivity() {
+class QuestionDetailsActivity : BaseActivity() {
 
     private val viewModel by viewModel<QuestionDetailsViewModel>()
 
@@ -99,9 +97,11 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
+    private val question: Question by lazy {
+        intent.getSerializableExtra(IntentConstant.EXTRA_QUESTION) as Question
+    }
+
     private fun loadQuestion() {
-        val question: Question =
-            intent.getSerializableExtra(IntentConstant.EXTRA_USER_ID) as Question
         viewModel.fetch(question.questionId)
     }
 
@@ -121,7 +121,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun bindQuestion(question: Question) {
         binding.bindQuestion(question) {
-            navigateToUser(question.owner)
+            navigator.goToUserScreen(question.owner)
         }
 
         bindDetailsPage(question)
@@ -144,12 +144,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun bindAnswerPage(question: Question) {
         answerAdapter.submitList(question.answers)
-    }
-
-    private fun navigateToUser(user: User) {
-        val intent = Intent(this, UserActivity::class.java)
-        intent.putExtra(IntentConstant.EXTRA_USER_ID, user.userId)
-        startActivity(intent)
     }
 }
 

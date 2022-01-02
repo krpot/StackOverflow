@@ -1,29 +1,25 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ConcatAdapter
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
 import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
 import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingStateAdapter
-import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.listener.FastClickHandler
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.RecyclerViewHelper
-import com.warmpot.android.stackoverflow.screen.question.details.QuestionDetailsActivity
 import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionAdapter
 import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionViewHolder
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListUiState
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
 import com.warmpot.android.stackoverflow.screen.question.model.Question
-import com.warmpot.android.stackoverflow.screen.user.UserActivity
 import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.RecyclerViewDivider
 import com.warmpot.android.stackoverflow.utils.hide
 import com.warmpot.android.stackoverflow.utils.viewModel
 
-class QuestionListActivity : AppCompatActivity() {
+class QuestionListActivity : BaseActivity() {
 
     private val viewModel by viewModel<QuestionListViewModel>()
 
@@ -47,7 +43,6 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private lateinit var loadMoreListener: LoadMoreListener
-    private var lastItemClicked = 0L
 
     private fun setupViews() {
         binding.apply {
@@ -93,26 +88,14 @@ class QuestionListActivity : AppCompatActivity() {
 
     private fun ownerClicked(user: User) {
         fastClickHandler.performClick {
-            navigateToUser(user)
+            navigator.goToUserScreen(user)
         }
     }
 
     private fun questionClicked(question: Question) {
         fastClickHandler.performClick {
-            navigateToDetails(question)
+            navigator.goToDetailsScreen(question)
         }
-    }
-
-    private fun navigateToDetails(question: Question) {
-        val intent = Intent(this, QuestionDetailsActivity::class.java)
-        intent.putExtra(IntentConstant.EXTRA_USER_ID, question)
-        startActivity(intent)
-    }
-
-    private fun navigateToUser(user: User) {
-        val intent = Intent(this, UserActivity::class.java)
-        intent.putExtra(IntentConstant.EXTRA_USER_ID, user.userId)
-        startActivity(intent)
     }
 
     private fun pullToRefresh() {
