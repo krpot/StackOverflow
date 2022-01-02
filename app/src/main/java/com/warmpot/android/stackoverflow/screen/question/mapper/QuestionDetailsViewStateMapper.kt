@@ -8,6 +8,7 @@ import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
 import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewState
+import com.warmpot.android.stackoverflow.screen.question.model.QuestionMapper
 
 class QuestionDetailsViewStateMapper :
     AsyncMapper<OneOf<Pair<QuestionsResponse, AnswersResponse>>, QuestionDetailsViewState> {

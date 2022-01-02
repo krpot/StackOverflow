@@ -1,4 +1,4 @@
-package com.warmpot.android.stackoverflow.screen.question.mapper
+package com.warmpot.android.stackoverflow.screen.question.model
 
 import com.warmpot.android.stackoverflow.common.AsyncMapper
 import com.warmpot.android.stackoverflow.common.EpochSecond

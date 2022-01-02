@@ -2,6 +2,7 @@ package com.warmpot.android.stackoverflow.screen.question.model
 
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.EpochSecond
+import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
 import com.warmpot.android.stackoverflow.screen.common.adapter.ListItem
 import com.warmpot.android.stackoverflow.screen.user.model.User
 import java.io.Serializable
@@ -25,7 +26,12 @@ data class Question(
     val answers: List<Answer> = emptyList(),
     override val viewType: Int = VIEW_TYPE
 ) : ListItem, Serializable {
+
     companion object {
         const val VIEW_TYPE = R.layout.row_question
+
+        suspend fun from(src: QuestionSchema): Question {
+            return QuestionMapper().convert(src)
+        }
     }
 }
