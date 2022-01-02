@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.warmpot.android.stackoverflow.databinding.RowAnswerBinding
 import com.warmpot.android.stackoverflow.screen.question.model.Answer
 import com.warmpot.android.stackoverflow.utils.inflate
+import com.warmpot.android.stackoverflow.utils.loadHtml
 
 class AnswerAdapter : ListAdapter<Answer, AnswerViewHolder>(DIFF_CALLBACK) {
 
@@ -45,7 +46,7 @@ class AnswerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(item: Answer) {
         binding.apply {
             profileView.bindUser(item.owner)
-            webView.loadData(item.body)
+            webView.loadHtml(item.body)
         }
     }
 
