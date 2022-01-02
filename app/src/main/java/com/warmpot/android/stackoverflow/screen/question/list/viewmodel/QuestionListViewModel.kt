@@ -1,11 +1,9 @@
 package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
 
 import androidx.lifecycle.LiveData
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
 import com.warmpot.android.stackoverflow.domain.questions.GetQuestionsUseCase
 import com.warmpot.android.stackoverflow.domain.questions.QuestionsFetchResult
 import com.warmpot.android.stackoverflow.screen.common.viewmodel.BaseViewModel
-import com.warmpot.android.stackoverflow.screen.question.model.Question
 
 class QuestionListViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase,
@@ -55,15 +53,8 @@ class QuestionListViewModel(
                 uiStateLiveData.postNoMoreDataItem()
             }
             is QuestionsFetchResult.HasData -> {
-                mapAndPostQuestions(result.data)
+                uiStateLiveData.postQuestions(result.data)
             }
         }
     }
-
-    // region post functions
-    private suspend fun mapAndPostQuestions(schemas: List<QuestionSchema>) {
-        val questions = schemas.map { schema -> Question.from(schema) }
-        uiStateLiveData.postQuestions(questions)
-    }
-    // endregion post functions
 }

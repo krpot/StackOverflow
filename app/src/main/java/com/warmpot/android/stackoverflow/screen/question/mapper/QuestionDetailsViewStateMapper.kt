@@ -7,28 +7,27 @@ import com.warmpot.android.stackoverflow.data.schema.answers.AnswersResponse
 import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
 import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
-import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewState
-import com.warmpot.android.stackoverflow.screen.question.model.QuestionMapper
+import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsUiState
 
 class QuestionDetailsViewStateMapper :
-    AsyncMapper<OneOf<Pair<QuestionsResponse, AnswersResponse>>, QuestionDetailsViewState> {
+    AsyncMapper<OneOf<Pair<QuestionsResponse, AnswersResponse>>, QuestionDetailsUiState> {
 
     private val questionMapper by lazy { QuestionMapper() }
     private val answerMapper by lazy { AnswerMapper() }
 
-    override suspend fun convert(src: OneOf<Pair<QuestionsResponse, AnswersResponse>>): QuestionDetailsViewState {
+    override suspend fun convert(src: OneOf<Pair<QuestionsResponse, AnswersResponse>>): QuestionDetailsUiState {
         return when (src) {
             is OneOf.Error -> {
-                QuestionDetailsViewState(error = src.e.toUiMessage())
+                QuestionDetailsUiState(error = src.e.toUiMessage())
             }
             is OneOf.Success -> {
                 val (questionsResponse, answersResponse) = src.data
                 if (questionsResponse.items.isEmpty()) {
-                    QuestionDetailsViewState(error = Str.from(R.string.error_question_load_failure))
+                    QuestionDetailsUiState(error = Str.from(R.string.error_question_load_failure))
                 } else {
                     val question = questionMapper.convert(questionsResponse.items.first())
                     val answers = answersResponse.items.map { answerMapper.convert(it) }
-                    QuestionDetailsViewState(question = question.copy(answers = answers))
+                    QuestionDetailsUiState(question = question.copy(answers = answers))
                 }
             }
         }

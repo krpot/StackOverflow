@@ -9,8 +9,5 @@ data class QuestionListUiState(
     val listItems: List<Question>? = null
 )
 
-data class ListItem(val data: List<Question>)
-
-
 internal fun stateOf(loading: LoadingState) = QuestionListUiState(loading = EventValue(listOf(loading)))
 internal fun stateOf(items: List<Question>) = QuestionListUiState(listItems = items)

@@ -18,7 +18,7 @@ import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.details.tabs.adapter.AnswerAdapter
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
-import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewState
+import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsUiState
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.UserActivity
 import com.warmpot.android.stackoverflow.screen.user.model.User
@@ -103,14 +103,14 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel.viewState.observe(this) { viewState ->
+        viewModel.uiState.observe(this) { viewState ->
             bindViewState(viewState)
         }
     }
 
-    private fun bindViewState(viewState: QuestionDetailsViewState) {
-        viewState.error?.also { bindError(it) }
-        viewState.question?.also { bindQuestion(it) }
+    private fun bindViewState(uiState: QuestionDetailsUiState) {
+        uiState.error?.also { bindError(it) }
+        uiState.question?.also { bindQuestion(it) }
     }
 
     private fun bindError(error: Str) {

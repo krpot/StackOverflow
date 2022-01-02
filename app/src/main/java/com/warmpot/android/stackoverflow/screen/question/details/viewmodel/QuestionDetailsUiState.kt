@@ -3,7 +3,7 @@ package com.warmpot.android.stackoverflow.screen.question.details.viewmodel
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 
-class QuestionDetailsViewState(
+class QuestionDetailsUiState(
     val error: Str? = null,
     val question: Question? = null,
 )
