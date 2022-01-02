@@ -35,42 +35,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/createdDateTxt" />
 
-    <TextView
-        android:id="@+id/voteCountTxt"
+    <LinearLayout
+        android:id="@+id/voteLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/spacing_md"
-        android:paddingStart="0dp"
-        android:paddingEnd="@dimen/spacing_sm"
-        app:layout_constraintEnd_toStartOf="@id/viewCountTxt"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleDivider"
-        tools:text="0 upvote" />
-
-    <TextView
-        android:id="@+id/viewCountTxt"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/spacing_sm"
-        android:paddingVertical="@dimen/spacing_md"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@id/ownerTxt"
-        app:layout_constraintStart_toEndOf="@id/voteCountTxt"
-        app:layout_constraintTop_toBottomOf="@id/titleDivider"
-        tools:text="0 views" />
-
-    <TextView
-        android:id="@+id/ownerTxt"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/spacing_md"
-        android:textAlignment="textEnd"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textStyle="bold"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/viewCountTxt"
-        app:layout_constraintTop_toBottomOf="@id/titleDivider"
-        tools:text="@tools:sample/full_names" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleDivider">
+
+        <TextView
+            android:id="@+id/voteCountTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingVertical="@dimen/spacing_md"
+            android:paddingStart="0dp"
+            android:paddingEnd="@dimen/spacing_sm"
+            tools:text="0 upvote" />
+
+        <TextView
+            android:id="@+id/viewCountTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingHorizontal="@dimen/spacing_sm"
+            android:paddingVertical="@dimen/spacing_md"
+            android:textAlignment="center"
+            tools:text="0 views" />
+
+        <TextView
+            android:id="@+id/ownerTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingVertical="@dimen/spacing_md"
+            android:textAlignment="textEnd"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textStyle="bold"
+            tools:text="@tools:sample/full_names" />
+    </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/detailsTabs"
@@ -78,7 +83,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ownerTxt" />
+        app:layout_constraintTop_toBottomOf="@id/voteLayout" />
 
     <ViewFlipper
         android:id="@+id/viewFlipper"

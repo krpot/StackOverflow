@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.webkit.URLUtil
 import android.widget.FrameLayout
 import com.warmpot.android.stackoverflow.databinding.ViewMiniUserProfileBinding
+import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.circle
 
@@ -68,4 +69,16 @@ class MiniUserProfileView @JvmOverloads constructor(
         silver = user.badgeCounts?.silver ?: 0
         bronze = user.badgeCounts?.silver ?: 0
     }
+}
+
+fun MiniUserProfileView.bindWith(question: Question) {
+    val owner = question.owner
+    val badges = owner.badgeCounts
+
+    this.displayName = owner.displayName
+    this.avatarUrl = owner.profileImage
+    this.reputation = owner.reputation
+    this.gold = badges?.gold ?: 0
+    this.silver = badges?.silver ?: 0
+    this.reputation = badges?.bronze ?: 0
 }

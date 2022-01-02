@@ -17,7 +17,7 @@ class AnswersFragment : Fragment(R.layout.fragment_answers) {
 
     private val viewModel by activityViewModel<QuestionDetailsViewModel>()
 
-    private val answers by lazy { requireArguments().getSerializable(IntentConstant.INTENT_PARAM_KEY) as List<Answer> }
+    private val answers by lazy { requireArguments().getSerializable(IntentConstant.EXTRA_USER_ID) as List<Answer> }
 
     private val answerAdapter by lazy { AnswerAdapter() }
 
@@ -46,7 +46,7 @@ class AnswersFragment : Fragment(R.layout.fragment_answers) {
     companion object {
         fun create(answers: List<Answer>): AnswersFragment {
             return AnswersFragment().also {
-                it.arguments = bundleOf(IntentConstant.INTENT_PARAM_KEY to answers)
+                it.arguments = bundleOf(IntentConstant.EXTRA_USER_ID to answers)
             }
         }
     }

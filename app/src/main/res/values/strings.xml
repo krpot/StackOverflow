@@ -1,8 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ExtraTranslation">
     <string name="app_name">StackOverflow</string>
-    <string name="question_votes_fmt">%1$d votes</string>
-    <string name="question_answer_fmt">%1$d answers</string>
-    <string name="question_views_fmt">%1$d views</string>
+    <string name="question_votes_fmt">%1$s votes</string>
+    <string name="question_views_fmt">%1$s views</string>
     <string name="question_comment_fmt">%1$d comments</string>
     <string name="error_no_connectivity">No Internet connection. Please try again.</string>
     <string name="error_network_unavailable">Network is not available</string>

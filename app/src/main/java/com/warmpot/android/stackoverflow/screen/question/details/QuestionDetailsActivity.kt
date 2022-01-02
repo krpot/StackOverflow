@@ -16,15 +16,14 @@ import com.warmpot.android.stackoverflow.databinding.FragmentCommentsBinding
 import com.warmpot.android.stackoverflow.databinding.FragmentDetailsBinding
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
+import com.warmpot.android.stackoverflow.screen.customview.bindWith
 import com.warmpot.android.stackoverflow.screen.question.details.tabs.adapter.AnswerAdapter
-import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsUiState
+import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.UserActivity
 import com.warmpot.android.stackoverflow.screen.user.model.User
-import com.warmpot.android.stackoverflow.utils.colorRes
-import com.warmpot.android.stackoverflow.utils.toHtml
-import com.warmpot.android.stackoverflow.utils.viewModel
+import com.warmpot.android.stackoverflow.utils.*
 
 
 class QuestionDetailsActivity : AppCompatActivity() {
@@ -71,9 +70,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
             viewFlipper.addView(answersBinding.root)
             viewFlipper.addView(commentsBinding.root)
 
-            val detailsTab = detailsTabs.newTab().also { it.setText(R.string.question_details_tab_title) }
-            val answersTab = detailsTabs.newTab().also { it.setText(R.string.question_answers_tab_title) }
-            val commentsTab = detailsTabs.newTab().also { it.setText(R.string.question_comments_tab_title) }
+            val detailsTab =
+                detailsTabs.newTab().also { it.setText(R.string.question_details_tab_title) }
+            val answersTab =
+                detailsTabs.newTab().also { it.setText(R.string.question_answers_tab_title) }
+            val commentsTab =
+                detailsTabs.newTab().also { it.setText(R.string.question_comments_tab_title) }
             detailsTabs.addTab(detailsTab)
             detailsTabs.addTab(answersTab)
             detailsTabs.addTab(commentsTab)
@@ -98,7 +100,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun loadQuestion() {
-        val question: Question = intent.getSerializableExtra(IntentConstant.INTENT_PARAM_KEY) as Question
+        val question: Question =
+            intent.getSerializableExtra(IntentConstant.EXTRA_USER_ID) as Question
         viewModel.fetch(question.questionId)
     }
 
@@ -117,15 +120,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun bindQuestion(question: Question) {
-        binding.apply {
-            titleTxt.text = question.title.toHtml()
-            voteCountTxt.text = getString(R.string.question_votes_fmt, question.upvoteCount)
-            viewCountTxt.text = getString(R.string.question_views_fmt, question.viewCount)
-            createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
-            ownerTxt.text = question.owner.displayName
-            ownerTxt.setOnClickListener {
-                navigateToUser(question.owner)
-            }
+        binding.bindQuestion(question) {
+            navigateToUser(question.owner)
         }
 
         bindDetailsPage(question)
@@ -136,30 +132,14 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun bindDetailsPage(question: Question) {
-        val owner = question.owner
         detailsBinding.apply {
-            webView.loadDataWithBaseURL(null, question.body, "text/html", "utf-8", null)
-            //ownerTxt.text = owner.displayName
-            //avatarImg.circle(owner.profileImage)
-            val badges = owner.badgeCounts
-            ownerStatsView.displayName = owner.displayName
-            ownerStatsView.avatarUrl = owner.profileImage
-            ownerStatsView.reputation = owner.reputation
-            ownerStatsView.gold = badges?.gold ?: 0
-            ownerStatsView.silver = badges?.silver ?: 0
-            ownerStatsView.reputation = badges?.bronze ?: 0
+            webView.loadHtml(question.body)
+            ownerStatsView.bindWith(question)
         }
     }
 
     private fun bindAnswersBadge(question: Question) {
-        binding.apply {
-            if (question.answerCount > 0) {
-                val badge = detailsTabs.getTabAt(1)!!.orCreateBadge
-                badge.backgroundColor = detailsTabs.context.colorRes(R.color.design_default_color_primary)
-                badge.isVisible = true
-                badge.number = question.answerCount
-            }
-        }
+        binding.bindAnswersBadge(question)
     }
 
     private fun bindAnswerPage(question: Question) {
@@ -168,7 +148,32 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun navigateToUser(user: User) {
         val intent = Intent(this, UserActivity::class.java)
-        intent.putExtra(IntentConstant.INTENT_PARAM_KEY, user.userId)
+        intent.putExtra(IntentConstant.EXTRA_USER_ID, user.userId)
         startActivity(intent)
     }
+}
+
+fun ActivityQuestionDetailsBinding.bindQuestion(question: Question, ownerClicked: (User) -> Unit) {
+    val context = this.root.context
+
+    titleTxt.text = question.title.toHtml()
+    voteCountTxt.text =
+        context.getString(R.string.question_votes_fmt, question.upvoteCount.formatted())
+    viewCountTxt.text =
+        context.getString(R.string.question_views_fmt, question.viewCount.formatted())
+    createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
+    ownerTxt.text = question.owner.displayName
+    ownerTxt.setOnClickListener {
+        ownerClicked(question.owner)
+    }
+}
+
+fun ActivityQuestionDetailsBinding.bindAnswersBadge(question: Question) {
+    if (question.answerCount < 1) return
+
+    val badge = detailsTabs.getTabAt(1)!!.orCreateBadge
+    badge.backgroundColor =
+        detailsTabs.context.colorRes(R.color.design_default_color_primary)
+    badge.isVisible = true
+    badge.number = question.answerCount
 }

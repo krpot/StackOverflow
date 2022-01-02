@@ -25,7 +25,7 @@ class UserActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityUserBinding.inflate(layoutInflater) }
 
-    private val userId by lazy { intent.getIntExtra(IntentConstant.INTENT_PARAM_KEY, 0) }
+    private val userId by lazy { intent.getIntExtra(IntentConstant.EXTRA_USER_ID, 0) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

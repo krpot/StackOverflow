@@ -105,13 +105,13 @@ class QuestionListActivity : AppCompatActivity() {
 
     private fun navigateToDetails(question: Question) {
         val intent = Intent(this, QuestionDetailsActivity::class.java)
-        intent.putExtra(IntentConstant.INTENT_PARAM_KEY, question)
+        intent.putExtra(IntentConstant.EXTRA_USER_ID, question)
         startActivity(intent)
     }
 
     private fun navigateToUser(user: User) {
         val intent = Intent(this, UserActivity::class.java)
-        intent.putExtra(IntentConstant.INTENT_PARAM_KEY, user.userId)
+        intent.putExtra(IntentConstant.EXTRA_USER_ID, user.userId)
         startActivity(intent)
     }
 
