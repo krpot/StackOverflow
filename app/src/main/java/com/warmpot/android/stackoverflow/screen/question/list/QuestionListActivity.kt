@@ -14,8 +14,8 @@ import com.warmpot.android.stackoverflow.screen.common.recyclerview.RecyclerView
 import com.warmpot.android.stackoverflow.screen.question.details.QuestionDetailsActivity
 import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionAdapter
 import com.warmpot.android.stackoverflow.screen.question.list.adapter.QuestionViewHolder
+import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListUiState
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
-import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewState
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.UserActivity
 import com.warmpot.android.stackoverflow.screen.user.model.User
@@ -33,6 +33,7 @@ class QuestionListActivity : AppCompatActivity() {
     private val questionAdapter by lazy { QuestionAdapter() }
     private val concatAdapter by lazy { ConcatAdapter(questionAdapter, loadingStateAdapter) }
 
+    // Replace with MutableState debounce
     private val fastClickHandler by lazy { FastClickHandler() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,21 +134,22 @@ class QuestionListActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel.observe(this) { viewState ->
-            when (viewState) {
-                is QuestionListViewState.Loading -> handleLoadMore(viewState.data)
-                is QuestionListViewState.ListItem -> handleQuestionFetched(viewState.data)
-            }
-        }
+        viewModel.uiState.observe(this, ::handleUiState)
     }
 
-    private fun handleQuestionFetched(questions: List<Question>?) {
+    private fun handleUiState(uiState: QuestionListUiState) {
+        uiState.loading?.value()?.also(::bindLoading)
+        uiState.listItems?.also(::bindListItems)
+    }
+
+    private fun bindListItems(questions: List<Question>?) {
         questionAdapter.submitList(questions) {
             loadMoreDone()
         }
     }
 
-    private fun handleLoadMore(loadingStates: List<LoadingState>?) {
+    private fun bindLoading(loadingStates: List<LoadingState>?) {
+        loadMoreDone()
         loadingStateAdapter.submitList(loadingStates)
     }
 }

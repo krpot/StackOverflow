@@ -18,17 +18,12 @@ class QuestionListViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase
 ) : ViewModel() {
 
-    private val questionsLiveData = MutableLiveData<QuestionListViewState.ListItem>()
-    private val loadingLiveData = MutableLiveData<QuestionListViewState.Loading>()
+    private val uiStateLiveData = MutableLiveData<QuestionListUiState>()
+    val uiState: LiveData<QuestionListUiState> get() = uiStateLiveData
 
     private val questionMapper by lazy { QuestionMapper() }
 
     private var job: Job? = null
-
-    fun observe(owner: LifecycleOwner, onChange: (QuestionListViewState) -> Unit) {
-        questionsLiveData.observe(owner, Observer(onChange))
-        loadingLiveData.observe(owner, Observer(onChange))
-    }
 
     // region public functions
     fun loadFirstPageQuestions() {
@@ -104,7 +99,15 @@ class QuestionListViewModel(
         message: Str? = null,
         isRetry: Boolean = false
     ) {
-        loadingLiveData.postValue(stateOf(LoadingState(isLoading = isLoading, message = message, isRetry = isRetry)))
+        uiStateLiveData.postValue(
+            stateOf(
+                LoadingState(
+                    isLoading = isLoading,
+                    message = message,
+                    isRetry = isRetry
+                )
+            )
+        )
     }
     // endregion post functions
 
@@ -117,7 +120,7 @@ class QuestionListViewModel(
     }
 
     private fun postQuestions(items: List<Question>) {
-        questionsLiveData.postValue(stateOf(items))
+        uiStateLiveData.postValue(stateOf(items))
     }
     // endregion private helper functions
 }
