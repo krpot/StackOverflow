@@ -11,15 +11,19 @@ import com.warmpot.android.stackoverflow.databinding.ActivityQuestionDetailsBind
 import com.warmpot.android.stackoverflow.databinding.FragmentAnswersBinding
 import com.warmpot.android.stackoverflow.databinding.FragmentCommentsBinding
 import com.warmpot.android.stackoverflow.databinding.FragmentDetailsBinding
+import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.customview.bindWith
 import com.warmpot.android.stackoverflow.screen.question.details.tabs.adapter.AnswerAdapter
+import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsUiState
 import com.warmpot.android.stackoverflow.screen.question.model.Answer
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.*
 
 class QuestionDetailsActivityBinder(
-    private val layoutInflater: LayoutInflater
+    private val layoutInflater: LayoutInflater,
+    private val onOwnerClicked: (User) -> Unit,
+    private val onFetchFailed: (Str) -> Unit
 ) {
     val binding: ActivityQuestionDetailsBinding by lazy {
         ActivityQuestionDetailsBinding.inflate(
@@ -69,16 +73,31 @@ class QuestionDetailsActivityBinder(
         }
     }
 
-    fun bindQuestion(question: Question, ownerClicked: (User) -> Unit) {
-        updateQuestion(question, ownerClicked)
+    fun handleUiState(uiState: QuestionDetailsUiState) {
+        uiState.error?.also(::fetchFailed)
+        uiState.question?.also(::bindQuestion)
+    }
+
+    private fun fetchFailed(str: Str) {
+        hideLoadingBar()
+        onFetchFailed(str)
+    }
+
+
+    private fun bindQuestion(question: Question) {
+        updateQuestion(question)
         updateDetailsPage(question)
         updateAnswersBadge(question)
         submitAnswers(question.answers)
 
+        hideLoadingBar()
+    }
+
+    private fun hideLoadingBar() {
         binding.loadingBar.hide()
     }
 
-    private fun updateQuestion(question: Question, ownerClicked: (User) -> Unit) {
+    private fun updateQuestion(question: Question) {
         binding.apply {
             titleTxt.text = question.title.toHtml()
             voteCountTxt.text =
@@ -88,7 +107,7 @@ class QuestionDetailsActivityBinder(
             createdDateTxt.text = question.creationDate.format(DateTimeFormatType.ddMMyyHHmm)
             ownerTxt.text = question.owner.displayName
             ownerTxt.setOnClickListener {
-                ownerClicked(question.owner)
+                onOwnerClicked(question.owner)
             }
         }
     }
@@ -103,10 +122,9 @@ class QuestionDetailsActivityBinder(
     private fun updateAnswersBadge(question: Question) {
         if (question.answerCount < 1) return
 
-        binding.apply {
-            val badge = detailsTabs.getTabAt(1)!!.orCreateBadge
+        binding.detailsTabs.getTabAt(1)?.orCreateBadge?.also { badge ->
             badge.backgroundColor =
-                detailsTabs.context.colorRes(R.color.design_default_color_primary)
+                context.colorRes(R.color.design_default_color_primary)
             badge.isVisible = true
             badge.number = question.answerCount
         }

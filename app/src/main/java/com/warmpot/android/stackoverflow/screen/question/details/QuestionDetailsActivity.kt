@@ -7,21 +7,27 @@ import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.domain.model.QuestionId
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
 import com.warmpot.android.stackoverflow.screen.common.dialog.InfoDialogArg
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.common.resource.text
-import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsUiState
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.model.Question
+import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.utils.viewModel
 
 
-class QuestionDetailsActivity : BaseActivity() {
+class QuestionDetailsActivity : BaseActivity(), DialogListener {
 
     private val viewModel by viewModel<QuestionDetailsViewModel>()
 
     private val binding: QuestionDetailsActivityBinder by lazy {
-        QuestionDetailsActivityBinder(layoutInflater)
+        QuestionDetailsActivityBinder(
+            layoutInflater = layoutInflater,
+            onOwnerClicked = ::ownerClicked,
+            onFetchFailed = ::showError
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,16 +63,11 @@ class QuestionDetailsActivity : BaseActivity() {
     }
 
     private fun observeUiState() {
-        viewModel.uiState.observe(this, ::handleUiState)
-    }
-
-    private fun handleUiState(uiState: QuestionDetailsUiState) {
-        uiState.error?.also(::showError)
-        uiState.question?.also(::bindQuestion)
+        viewModel.uiState.observe(this, binding::handleUiState)
     }
 
     private fun showError(error: Str) {
-        navigator.showInfoDialog(
+        dialogHelper.showInfoDialog(
             InfoDialogArg(
                 title = getString(R.string.data_load_error_title),
                 message = error.text(context)
@@ -74,9 +75,11 @@ class QuestionDetailsActivity : BaseActivity() {
         )
     }
 
-    private fun bindQuestion(question: Question) {
-        binding.bindQuestion(question) {
-            navigator.goToUserScreen(question.owner)
-        }
+    private fun ownerClicked(owner: User) {
+        navigator.goToUserScreen(owner)
+    }
+
+    override fun onDialogCompleted(result: DialogResult) {
+
     }
 }

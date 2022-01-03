@@ -65,7 +65,7 @@ class UserActivity : BaseActivity(), DialogListener {
     private fun showError(str: Str?) {
         binding.containerView.hide()
 
-        navigator.showInfoDialog(
+        dialogHelper.showInfoDialog(
             InfoDialogArg(title = getString(R.string.data_load_error_title), message = str.text(context))
         )
     }
