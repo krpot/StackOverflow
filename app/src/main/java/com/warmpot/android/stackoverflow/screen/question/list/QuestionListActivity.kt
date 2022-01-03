@@ -29,7 +29,6 @@ class QuestionListActivity : BaseActivity() {
     private val questionAdapter by lazy { QuestionAdapter() }
     private val concatAdapter by lazy { ConcatAdapter(questionAdapter, loadingStateAdapter) }
 
-    // Replace with MutableState debounce
     private val fastClickHandler by lazy { FastClickHandler() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +36,7 @@ class QuestionListActivity : BaseActivity() {
         setContentView(binding.root)
 
         setupViews()
-        setupViewModel()
+        observeUiState()
 
         loadFirstPageQuestions()
     }
@@ -111,12 +110,14 @@ class QuestionListActivity : BaseActivity() {
     }
 
     private fun loadMoreDone() {
-        binding.loadingBar.hide()
-        binding.swipeRefresh.isRefreshing = false
+        binding.apply {
+            loadingBar.hide()
+            swipeRefresh.isRefreshing = false
+        }
         loadMoreListener.loadMoreDone()
     }
 
-    private fun setupViewModel() {
+    private fun observeUiState() {
         viewModel.uiState.observe(this, ::handleUiState)
     }
 

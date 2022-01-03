@@ -3,7 +3,7 @@ package com.warmpot.android.stackoverflow.screen.question.details
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.core.view.isVisible
+import androidx.annotation.StringRes
 import com.google.android.material.tabs.TabLayout
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.DateTimeFormatType
@@ -40,7 +40,7 @@ class QuestionDetailsActivity : BaseActivity() {
         setContentView(binding.root)
 
         setupViews()
-        setupViewModel()
+        observeUiState()
 
         loadQuestion()
     }
@@ -63,33 +63,23 @@ class QuestionDetailsActivity : BaseActivity() {
     }
 
     private fun setupTabLayout() {
+        fun addTab(@StringRes strId: Int) {
+            val tab = binding.detailsTabs.newTab().also { it.setText(strId) }
+            binding.detailsTabs.addTab(tab)
+        }
+
         binding.apply {
             viewFlipper.addView(detailsBinding.root)
             viewFlipper.addView(answersBinding.root)
             viewFlipper.addView(commentsBinding.root)
 
-            val detailsTab =
-                detailsTabs.newTab().also { it.setText(R.string.question_details_tab_title) }
-            val answersTab =
-                detailsTabs.newTab().also { it.setText(R.string.question_answers_tab_title) }
-            val commentsTab =
-                detailsTabs.newTab().also { it.setText(R.string.question_comments_tab_title) }
-            detailsTabs.addTab(detailsTab)
-            detailsTabs.addTab(answersTab)
-            detailsTabs.addTab(commentsTab)
+            addTab(R.string.question_details_tab_title)
+            addTab(R.string.question_answers_tab_title)
+            addTab(R.string.question_comments_tab_title)
 
-            detailsTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    val position = tab?.position ?: return
-                    viewFlipper.displayedChild = position
-                }
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-                }
-
-                override fun onTabReselected(tab: TabLayout.Tab?) {
-                }
-            })
+            detailsTabs.doTabSelected { _, position ->
+                viewFlipper.displayedChild = position
+            }
         }
 
         answersBinding.apply {
@@ -105,15 +95,13 @@ class QuestionDetailsActivity : BaseActivity() {
         viewModel.fetch(question.questionId)
     }
 
-    private fun setupViewModel() {
-        viewModel.uiState.observe(this) { viewState ->
-            bindViewState(viewState)
-        }
+    private fun observeUiState() {
+        viewModel.uiState.observe(this, ::handleUiState)
     }
 
-    private fun bindViewState(uiState: QuestionDetailsUiState) {
-        uiState.error?.also { bindError(it) }
-        uiState.question?.also { bindQuestion(it) }
+    private fun handleUiState(uiState: QuestionDetailsUiState) {
+        uiState.error?.also(::bindError)
+        uiState.question?.also(::bindQuestion)
     }
 
     private fun bindError(error: Str) {
@@ -125,10 +113,10 @@ class QuestionDetailsActivity : BaseActivity() {
         }
 
         bindDetailsPage(question)
-        bindAnswersBadge(question)
+        binding.bindAnswersBadge(question)
         bindAnswerPage(question)
 
-        binding.loadingBar.isVisible = false
+        binding.loadingBar.hide()
     }
 
     private fun bindDetailsPage(question: Question) {
@@ -136,10 +124,6 @@ class QuestionDetailsActivity : BaseActivity() {
             webView.loadHtml(question.body)
             ownerStatsView.bindWith(question)
         }
-    }
-
-    private fun bindAnswersBadge(question: Question) {
-        binding.bindAnswersBadge(question)
     }
 
     private fun bindAnswerPage(question: Question) {
