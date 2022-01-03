@@ -2,6 +2,8 @@ package com.warmpot.android.stackoverflow.screen.user.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.warmpot.android.stackoverflow.common.OneOf
+import com.warmpot.android.stackoverflow.common.onError
+import com.warmpot.android.stackoverflow.common.onSuccess
 import com.warmpot.android.stackoverflow.domain.users.GetUserResult
 import com.warmpot.android.stackoverflow.domain.users.GetUserUseCase
 import com.warmpot.android.stackoverflow.screen.common.viewmodel.BaseViewModel
@@ -23,14 +25,12 @@ class UserViewModel(
     // endregion public functions
 
     private fun handleGetUserResult(result: OneOf<GetUserResult>) {
-        stateLiveData.postError(RuntimeException("User loading failed"))
-
-        /*result.onError { throwable ->
-            postError(throwable)
+        result.onError { throwable ->
+            stateLiveData.postError(throwable)
         }
         result.onSuccess { userResponse ->
             stateLiveData.postUser(userResponse.data)
-        }*/
+        }
     }
 }
 
