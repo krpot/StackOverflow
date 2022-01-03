@@ -2,6 +2,7 @@ package com.warmpot.android.stackoverflow.screen.common.resource
 
 import android.content.Context
 import androidx.annotation.StringRes
+import java.io.Serializable
 
 sealed class Str {
     data class Id(val id: Int) : Str()

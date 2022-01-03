@@ -49,5 +49,4 @@ class AnswerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             webView.loadHtml(item.body)
         }
     }
-
 }

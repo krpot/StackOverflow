@@ -4,6 +4,7 @@ import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.tryOneOf
 import com.warmpot.android.stackoverflow.data.schema.answers.AnswersResponse
 import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
+import com.warmpot.android.stackoverflow.domain.model.QuestionId
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import kotlinx.coroutines.*
 
@@ -11,9 +12,9 @@ class GetQuestionDetailsUseCase(
     private val stackOverflowApi: StackoverflowApi
 ) {
 
-    suspend fun execute(questionId: Int): OneOf<Pair<QuestionsResponse, AnswersResponse>> = withContext(Dispatchers.IO) {
-        val deferredGetQuestion: Deferred<OneOf<QuestionsResponse>> = async { getQuestionAsync(questionId) }
-        val deferredGetAnswers: Deferred<OneOf<AnswersResponse>> = async { getAnswersAsync(questionId) }
+    suspend fun execute(questionId: QuestionId): OneOf<Pair<QuestionsResponse, AnswersResponse>> = withContext(Dispatchers.IO) {
+        val deferredGetQuestion: Deferred<OneOf<QuestionsResponse>> = async { getQuestionAsync(questionId.value) }
+        val deferredGetAnswers: Deferred<OneOf<AnswersResponse>> = async { getAnswersAsync(questionId.value) }
 
         val oneOfGetQuestion: OneOf<QuestionsResponse> = deferredGetQuestion.await()
         val oneOfGetAnswers: OneOf<AnswersResponse> = deferredGetAnswers.await()

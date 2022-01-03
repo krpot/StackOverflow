@@ -6,20 +6,23 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.databinding.ActivityUserBinding
+import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
+import com.warmpot.android.stackoverflow.screen.common.dialog.InfoDialogArg
+import com.warmpot.android.stackoverflow.screen.common.resource.Str
+import com.warmpot.android.stackoverflow.screen.common.resource.text
 import com.warmpot.android.stackoverflow.screen.user.model.User
+import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserUiState
 import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserViewModel
-import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserViewState
-import com.warmpot.android.stackoverflow.utils.circle
-import com.warmpot.android.stackoverflow.utils.show
-import com.warmpot.android.stackoverflow.utils.toHtml
-import com.warmpot.android.stackoverflow.utils.viewModel
+import com.warmpot.android.stackoverflow.utils.*
 
-class UserActivity : AppCompatActivity() {
+class UserActivity : BaseActivity(), DialogListener {
 
     private val viewModel by viewModel<UserViewModel>()
 
@@ -50,13 +53,27 @@ class UserActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel.viewState.observe(this) { userViewState ->
-            handleViewState(userViewState)
-        }
+        viewModel.uiState.observe(this, ::handleUiState)
     }
 
-    private fun handleViewState(state: UserViewState) {
+    private fun handleUiState(state: UserUiState) {
+        state.loading.value()?.also(::bindLoading)
+        state.error?.value()?.also(::showError)
         state.user?.also(::bindUser)
+    }
+
+    private fun showError(str: Str?) {
+        binding.containerView.hide()
+
+        navigator.showInfoDialog(
+            InfoDialogArg(title = getString(R.string.data_load_error_title), message = str.text(context))
+        )
+    }
+
+    private fun bindLoading(isLoading: Boolean) {
+        binding.apply {
+            loadingBar.isVisible = isLoading
+        }
     }
 
     private fun bindUser(user: User) {
@@ -76,6 +93,7 @@ class UserActivity : AppCompatActivity() {
             questionCountTxt.text = setSpanStyle(user.questionCount, "questions")
 
             scoreAndBadgeGroup.show()
+            containerView.show()
         }
     }
 
@@ -87,10 +105,19 @@ class UserActivity : AppCompatActivity() {
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         spannable.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(this, R.color.material_on_background_disabled)),
+            ForegroundColorSpan(
+                ContextCompat.getColor(
+                    this,
+                    R.color.material_on_background_disabled
+                )
+            ),
             count.toString().length, spannable.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         return spannable
+    }
+
+    override fun onDialogCompleted(result: DialogResult) {
+        println("##### onDialogCompleted: $result")
     }
 }

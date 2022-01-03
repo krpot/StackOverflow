@@ -7,10 +7,10 @@ import com.warmpot.android.stackoverflow.screen.common.viewmodel.BaseViewModel
 
 class QuestionListViewModel(
     private val getQuestionsUseCase: GetQuestionsUseCase,
-    private val uiStateLiveData: QuestionListUiStateLiveData = QuestionListUiStateLiveData()
+    private val stateLiveData: QuestionListUiStateLiveData = QuestionListUiStateLiveData()
 ) : BaseViewModel() {
 
-    val uiState: LiveData<QuestionListUiState> get() = uiStateLiveData.uiState
+    val uiState: LiveData<QuestionListUiState> get() = stateLiveData.uiState
 
     // region public functions
     fun loadFirstPageQuestions() {
@@ -22,7 +22,7 @@ class QuestionListViewModel(
 
     fun triggerLoadMore() {
         singleLaunch {
-            uiStateLiveData.postLoadMoreLoading()
+            stateLiveData.postLoadMoreLoading()
             handleQuestionListResult(getQuestionsUseCase.loadNext())
         }
     }
@@ -35,7 +35,7 @@ class QuestionListViewModel(
 
     fun loadMoreRetryClicked() {
         singleLaunch {
-            uiStateLiveData.postLoadMoreLoading()
+            stateLiveData.postLoadMoreLoading()
             handleQuestionListResult(getQuestionsUseCase.retry())
         }
     }
@@ -44,16 +44,16 @@ class QuestionListViewModel(
     private suspend fun handleQuestionListResult(result: QuestionsFetchResult) {
         when (result) {
             is QuestionsFetchResult.Failure -> {
-                uiStateLiveData.postLoadQuestionsError(result.e)
+                stateLiveData.postLoadQuestionsError(result.e)
             }
             is QuestionsFetchResult.Empty -> {
-                uiStateLiveData.postEmptyDataItem()
+                stateLiveData.postEmptyDataItem()
             }
             is QuestionsFetchResult.EndOfData -> {
-                uiStateLiveData.postNoMoreDataItem()
+                stateLiveData.postNoMoreDataItem()
             }
             is QuestionsFetchResult.HasData -> {
-                uiStateLiveData.postQuestions(result.data)
+                stateLiveData.postQuestions(result.data)
             }
         }
     }

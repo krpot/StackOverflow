@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.annotation.StringRes
-import com.google.android.material.tabs.TabLayout
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.DateTimeFormatType
 import com.warmpot.android.stackoverflow.common.format
@@ -12,9 +11,12 @@ import com.warmpot.android.stackoverflow.databinding.ActivityQuestionDetailsBind
 import com.warmpot.android.stackoverflow.databinding.FragmentAnswersBinding
 import com.warmpot.android.stackoverflow.databinding.FragmentCommentsBinding
 import com.warmpot.android.stackoverflow.databinding.FragmentDetailsBinding
+import com.warmpot.android.stackoverflow.domain.model.QuestionId
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.dialog.InfoDialogArg
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
+import com.warmpot.android.stackoverflow.screen.common.resource.text
 import com.warmpot.android.stackoverflow.screen.customview.bindWith
 import com.warmpot.android.stackoverflow.screen.question.details.tabs.adapter.AnswerAdapter
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsUiState
@@ -92,7 +94,7 @@ class QuestionDetailsActivity : BaseActivity() {
     }
 
     private fun loadQuestion() {
-        viewModel.fetch(question.questionId)
+        viewModel.fetch(QuestionId(question.questionId))
     }
 
     private fun observeUiState() {
@@ -100,11 +102,17 @@ class QuestionDetailsActivity : BaseActivity() {
     }
 
     private fun handleUiState(uiState: QuestionDetailsUiState) {
-        uiState.error?.also(::bindError)
+        uiState.error?.also(::showError)
         uiState.question?.also(::bindQuestion)
     }
 
-    private fun bindError(error: Str) {
+    private fun showError(error: Str) {
+        navigator.showInfoDialog(
+            InfoDialogArg(
+                title = getString(R.string.data_load_error_title),
+                message = error.text(context)
+            )
+        )
     }
 
     private fun bindQuestion(question: Question) {

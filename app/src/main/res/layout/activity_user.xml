@@ -1,192 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/spacing_lg"
-    tools:context=".screen.user.UserActivity">
+    android:fillViewport="true">
 
-    <ImageView
-        android:id="@+id/photoImg"
-        android:layout_width="140dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containerView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/spacing_lg"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/owner_photo"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+        android:padding="@dimen/spacing_lg"
+        android:visibility="invisible"
+        tools:context=".screen.user.UserActivity">
 
-
-    <TextView
-        android:id="@+id/displayNameTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_lg"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/photoImg"
-        tools:text="@tools:sample/full_names" />
-
-    <TextView
-        android:id="@+id/aboutMeTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:textAppearance="?attr/textAppearanceCaption"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/displayNameTxt"
-        tools:text="@tools:sample/full_names" />
-
-    <TextView
-        android:id="@+id/locationTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:textAppearance="?attr/textAppearanceCaption"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/aboutMeTxt"
-        tools:text="@tools:sample/full_names" />
-
-    <TextView
-        android:id="@+id/websiteTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:textAppearance="?attr/textAppearanceCaption"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/locationTxt"
-        tools:text="@tools:sample/full_names" />
-
-    <LinearLayout
-        android:id="@+id/scoresLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:divider="?attr/dividerVertical"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingVertical="@dimen/spacing_lg"
-        android:showDividers="middle"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/websiteTxt"
-        tools:visibility="visible">
-
-        <com.warmpot.android.stackoverflow.screen.customview.StatView
-            android:id="@+id/reputationTxt"
-            android:layout_width="0dp"
+        <ImageView
+            android:id="@+id/photoImg"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:text="9" />
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/owner_photo"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
 
-        <com.warmpot.android.stackoverflow.screen.customview.StatView
-            android:id="@+id/answerCountTxt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:lineSpacingExtra="8sp"
-            tools:text="110" />
-
-        <com.warmpot.android.stackoverflow.screen.customview.StatView
-            android:id="@+id/questionCountTxt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            tools:text="110" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/badgesLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:divider="?attr/dividerVertical"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingVertical="@dimen/spacing_lg"
-        android:showDividers="middle"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scoresLayout"
-        tools:visibility="visible">
 
         <TextView
-            android:id="@+id/goldBadgeCountTxt"
-            android:layout_width="0dp"
+            android:id="@+id/displayNameTxt"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawablePadding="@dimen/spacing_sm"
-            android:textAlignment="center"
-            android:textAppearance="?attr/textAppearanceBody1"
-            app:drawableTopCompat="@drawable/ic_badge_gold"
-            tools:text="9" />
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/photoImg"
+            tools:text="@tools:sample/full_names" />
 
         <TextView
-            android:id="@+id/silverBadgeCountTxt"
-            android:layout_width="0dp"
+            android:id="@+id/aboutMeTxt"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawablePadding="@dimen/spacing_sm"
-            android:textAlignment="center"
-            android:textAppearance="?attr/textAppearanceBody1"
-            app:drawableTopCompat="@drawable/ic_badge_silver"
-            tools:text="57" />
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/displayNameTxt"
+            tools:text="@tools:sample/full_names" />
 
         <TextView
-            android:id="@+id/bronzeBadgeCountTxt"
+            android:id="@+id/locationTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/aboutMeTxt"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/websiteTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/locationTxt"
+            tools:text="@tools:sample/full_names" />
+
+        <LinearLayout
+            android:id="@+id/scoresLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:divider="?attr/dividerVertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/spacing_lg"
+            android:showDividers="middle"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/websiteTxt"
+            tools:visibility="visible">
+
+            <com.warmpot.android.stackoverflow.screen.customview.StatView
+                android:id="@+id/reputationTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="9" />
+
+            <com.warmpot.android.stackoverflow.screen.customview.StatView
+                android:id="@+id/answerCountTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:lineSpacingExtra="8sp"
+                tools:text="110" />
+
+            <com.warmpot.android.stackoverflow.screen.customview.StatView
+                android:id="@+id/questionCountTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="110" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/badgesLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:divider="?attr/dividerVertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/spacing_lg"
+            android:showDividers="middle"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scoresLayout"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/goldBadgeCountTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/spacing_sm"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBody1"
+                app:drawableTopCompat="@drawable/ic_badge_gold"
+                tools:text="9" />
+
+            <TextView
+                android:id="@+id/silverBadgeCountTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/spacing_sm"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBody1"
+                app:drawableTopCompat="@drawable/ic_badge_silver"
+                tools:text="57" />
+
+            <TextView
+                android:id="@+id/bronzeBadgeCountTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/spacing_sm"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBody1"
+                app:drawableTopCompat="@drawable/ic_badge_bronze"
+                tools:text="110" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/linkTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:layout_weight="1"
-            android:drawablePadding="@dimen/spacing_sm"
+            android:autoLink="web"
             android:textAlignment="center"
-            android:textAppearance="?attr/textAppearanceBody1"
-            app:drawableTopCompat="@drawable/ic_badge_bronze"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/badgesLayout"
             tools:text="110" />
 
-    </LinearLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/startGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".3" />
 
-    <TextView
-        android:id="@+id/linkTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_lg"
-        android:layout_weight="1"
-        android:autoLink="web"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/badgesLayout"
-        tools:text="110" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/endGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".7" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/startGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".3" />
+        <ProgressBar
+            android:id="@+id/loadingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/endGuide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".7" />
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/scoreAndBadgeGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="badgesLayout,scoresLayout" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/scoreAndBadgeGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="badgesLayout,scoresLayout" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
