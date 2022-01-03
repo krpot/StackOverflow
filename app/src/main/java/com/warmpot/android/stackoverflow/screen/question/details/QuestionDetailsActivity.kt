@@ -45,7 +45,7 @@ class QuestionDetailsActivity : BaseActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupViews() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.setupTabLayout()
+        binding.setupViews()
     }
 
     private val question: Question by lazy {

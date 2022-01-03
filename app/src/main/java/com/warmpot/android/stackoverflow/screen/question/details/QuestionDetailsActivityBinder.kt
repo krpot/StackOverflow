@@ -37,7 +37,12 @@ class QuestionDetailsActivityBinder(
 
     private val answerAdapter by lazy { AnswerAdapter() }
 
-    fun setupTabLayout() {
+    fun setupViews() {
+        setupTabs()
+        setupAnswerBinding()
+    }
+
+    private fun setupTabs() {
         fun addTab(@StringRes strId: Int) {
             val tab = binding.detailsTabs.newTab().also { it.setText(strId) }
             binding.detailsTabs.addTab(tab)
@@ -56,7 +61,9 @@ class QuestionDetailsActivityBinder(
                 viewFlipper.displayedChild = position
             }
         }
+    }
 
+    private fun setupAnswerBinding() {
         answersBinding.apply {
             answerRcv.adapter = answerAdapter
         }
