@@ -1,8 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
 
 import androidx.lifecycle.LiveData
-import com.warmpot.android.stackoverflow.domain.questions.GetQuestionsUseCase
-import com.warmpot.android.stackoverflow.domain.questions.QuestionsFetchResult
+import com.warmpot.android.stackoverflow.domain.questions.*
 import com.warmpot.android.stackoverflow.screen.common.viewmodel.BaseViewModel
 
 class QuestionListViewModel(
@@ -15,7 +14,7 @@ class QuestionListViewModel(
     // region public functions
     fun loadFirstPageQuestions() {
         singleLaunch {
-            val result = getQuestionsUseCase.loadFirstPage()
+            val result = getQuestionsUseCase.fetchFirstPage()
             handleQuestionListResult(result)
         }
     }
@@ -23,7 +22,7 @@ class QuestionListViewModel(
     fun triggerLoadMore() {
         singleLaunch {
             stateLiveData.postLoadMoreLoading()
-            handleQuestionListResult(getQuestionsUseCase.loadNext())
+            handleQuestionListResult(getQuestionsUseCase.fetchNextPage())
         }
     }
 

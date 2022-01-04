@@ -11,28 +11,24 @@ import kotlinx.coroutines.withContext
 class GetQuestionsUseCase(
     private val stackOverflowApi: StackoverflowApi
 ) {
-
     private val cache = arrayListOf<QuestionSchema>()
     private var page: Int = 1
     private var hasMoreData = false
 
-    private suspend fun execute(page: Int): QuestionsFetchResult =
+    suspend fun execute(fetchingType: FetchingType): QuestionsFetchResult =
         withContext(Dispatchers.IO) {
-            getQuestionsBy(page)
+            when (fetchingType) {
+                is FetchingType.FirstPage -> getQuestionsBy(1)
+                is FetchingType.NextPage -> getQuestionsBy(nextPage())
+                is FetchingType.Refresh -> refreshData()
+                is FetchingType.Retry -> getQuestionsBy(page = page)
+            }
         }
 
-    suspend fun loadFirstPage() = execute(1)
-
-    suspend fun loadNext(): QuestionsFetchResult {
-        return execute(nextPage())
-    }
-
-    suspend fun refresh(): QuestionsFetchResult {
+    private suspend fun refreshData(): QuestionsFetchResult {
         cache.clear()
-        return execute(page = this.page)
+        return getQuestionsBy(page = this.page)
     }
-
-    suspend fun retry() = execute(page = this.page)
 
     private suspend fun getQuestionsBy(page: Int): QuestionsFetchResult {
         return when (val result = tryOneOf { stackOverflowApi.getQuestions(page) }) {
@@ -61,3 +57,18 @@ class GetQuestionsUseCase(
 
     private fun nextPage() = page.inc()
 }
+
+sealed class FetchingType {
+    object FirstPage: FetchingType()
+    object NextPage: FetchingType()
+    object Refresh: FetchingType()
+    object Retry: FetchingType()
+}
+
+suspend fun GetQuestionsUseCase.fetchFirstPage() = execute(FetchingType.FirstPage)
+
+suspend fun GetQuestionsUseCase.fetchNextPage() = execute(FetchingType.NextPage)
+
+suspend fun GetQuestionsUseCase.refresh() = execute(FetchingType.Refresh)
+
+suspend fun GetQuestionsUseCase.retry() = execute(FetchingType.Retry)
