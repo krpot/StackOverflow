@@ -2,19 +2,17 @@ package com.warmpot.android.stackoverflow.domain.users
 
 import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.map
-import com.warmpot.android.stackoverflow.common.tryCatchOf
-import com.warmpot.android.stackoverflow.data.users.UserResponse
-import com.warmpot.android.stackoverflow.network.StackoverflowApi
+import com.warmpot.android.stackoverflow.data.users.UserDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetUserUseCase(
-    private val stackOverflowApi: StackoverflowApi
+    private val dataSource: UserDataSource
 ) {
 
     suspend fun getUser(userId: Int): OneOf<GetUserResult> =
         withContext(Dispatchers.IO) {
-            getUserBy(userId)
+            dataSource.getUser(userId)
                 .map { userResponse ->
                     GetUserResult(
                         hasMore = userResponse.hasMore,
@@ -23,10 +21,5 @@ class GetUserUseCase(
                         quotaRemaining = userResponse.quotaRemaining
                     )
                 }
-        }
-
-    private suspend fun getUserBy(userId: Int): OneOf<UserResponse> =
-        tryCatchOf {
-            stackOverflowApi.getUser(userId)
         }
 }

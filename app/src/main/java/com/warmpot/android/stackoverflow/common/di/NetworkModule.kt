@@ -2,6 +2,8 @@ package com.warmpot.android.stackoverflow.common.di
 
 import com.warmpot.android.stackoverflow.data.qustions.datasource.QuestionDataSource
 import com.warmpot.android.stackoverflow.data.qustions.datasource.QuestionRemoteDataSource
+import com.warmpot.android.stackoverflow.data.users.UserDataSource
+import com.warmpot.android.stackoverflow.data.users.UserRemoteDataSource
 import com.warmpot.android.stackoverflow.network.STACKOVERFLOW_BASE_URL
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import okhttp3.Interceptor
@@ -13,9 +15,11 @@ import retrofit2.create
 
 internal object NetworkModule {
 
-    val stackOverflowApi: StackoverflowApi by lazy { retrofit.create() }
-
     val questionDataSource: QuestionDataSource by lazy { QuestionRemoteDataSource(stackOverflowApi) }
+
+    val userDataSource: UserDataSource by lazy { UserRemoteDataSource(stackOverflowApi) }
+
+    private val stackOverflowApi: StackoverflowApi by lazy { retrofit.create() }
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
@@ -35,7 +39,8 @@ internal object NetworkModule {
 
     private fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(provideHttpLoginInterceptor())
+            //.addInterceptor(provideHttpLoginInterceptor())
+            .addNetworkInterceptor(provideHttpLoginInterceptor())
             .build()
     }
 }
