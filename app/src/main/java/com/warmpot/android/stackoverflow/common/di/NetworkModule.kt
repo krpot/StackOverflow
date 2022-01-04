@@ -1,5 +1,7 @@
-package com.warmpot.android.stackoverflow.network
+package com.warmpot.android.stackoverflow.common.di
 
+import com.warmpot.android.stackoverflow.network.STACKOVERFLOW_BASE_URL
+import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -7,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
-object NetworkModule {
+internal object NetworkModule {
 
     val stackOverflowApi: StackoverflowApi by lazy { retrofit.create() }
 

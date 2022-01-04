@@ -3,23 +3,34 @@ package com.warmpot.android.stackoverflow.screen.common.dialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 
 class DialogHelper(
     private val fragmentManager: FragmentManager
 ) {
-    fun showInfoDialog(args: InfoDialogArg) {
-        val dialogFragment = findDialogFragmentByTag(InfoDialogFragment.TAG)
-        dialogFragment?.dismiss()
-
-        InfoDialogFragment()
-            .also {
-                it.arguments = bundleOf(InfoDialogFragment.EXTRA_INFO_DIALOG_ARG to args)
-            }
-            .show(fragmentManager, InfoDialogFragment.TAG)
+    fun showInfoDialog(args: DialogArg) {
+        showDialogFragment(
+            fragment = InfoDialogFragment(),
+            tag = InfoDialogFragment.TAG,
+            args = args
+        )
     }
 
-    private fun showConfirmDialog(args: InfoDialogArg) {
-        // TODO : Implementation
+    fun showConfirmDialog(args: DialogArg) {
+        showDialogFragment(
+            fragment = ConfirmDialogFragment(),
+            tag = ConfirmDialogFragment.TAG,
+            args = args
+        )
+    }
+
+    private fun showDialogFragment(fragment: BaseDialogFragment, tag: String, args: DialogArg) {
+        val dialogFragment = findDialogFragmentByTag(tag)
+        dialogFragment?.dismiss()
+
+        fragment.also {
+            it.arguments = bundleOf(IntentConstant.EXTRA_DIALOG_ARG to args)
+        }.show(fragmentManager, tag)
     }
 
     private fun findDialogFragmentByTag(tag: String): DialogFragment? {

@@ -3,11 +3,12 @@ package com.warmpot.android.stackoverflow.screen.common.dialog
 import android.app.Dialog
 import android.os.Bundle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.warmpot.android.stackoverflow.screen.common.resource.text
 
-class InfoDialogFragment : BaseDialogFragment() {
+class ConfirmDialogFragment : BaseDialogFragment() {
 
     companion object {
-        const val TAG = "InfoDialogFragment"
+        const val TAG = "YesNoDialogFragment"
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -17,6 +18,10 @@ class InfoDialogFragment : BaseDialogFragment() {
             .setPositiveButton(positiveButtonCaption) { dialog, _ ->
                 dialog.dismiss()
                 dialogListener.onDialogCompleted(DialogResult.Yes(Unit))
+            }
+            .setNegativeButton(negativeButtonCaption) { dialog, _ ->
+                dialog.dismiss()
+                dialogListener.onDialogCompleted(DialogResult.No)
             }
             .create()
     }

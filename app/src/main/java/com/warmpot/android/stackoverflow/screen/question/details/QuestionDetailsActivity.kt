@@ -3,15 +3,14 @@ package com.warmpot.android.stackoverflow.screen.question.details
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
-import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.domain.model.QuestionId
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogArg
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
-import com.warmpot.android.stackoverflow.screen.common.dialog.InfoDialogArg
+import com.warmpot.android.stackoverflow.screen.common.resource.DialogRes
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
-import com.warmpot.android.stackoverflow.screen.common.resource.text
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.model.User
@@ -67,10 +66,11 @@ class QuestionDetailsActivity : BaseActivity(), DialogListener {
     }
 
     private fun showError(error: Str) {
-        dialogHelper.showInfoDialog(
-            InfoDialogArg(
-                title = getString(R.string.data_load_error_title),
-                message = error.text(context)
+        dialogHelper.showConfirmDialog(
+            DialogArg.Confirm(
+                title = DialogRes.defaultErrorTitle,
+                message = error,
+                positiveButtonCaption = DialogRes.retry,
             )
         )
     }
@@ -80,6 +80,11 @@ class QuestionDetailsActivity : BaseActivity(), DialogListener {
     }
 
     override fun onDialogCompleted(result: DialogResult) {
-
+        when (result) {
+            is DialogResult.Yes -> {
+                loadQuestion()
+            }
+            is DialogResult.No -> {}
+        }
     }
 }

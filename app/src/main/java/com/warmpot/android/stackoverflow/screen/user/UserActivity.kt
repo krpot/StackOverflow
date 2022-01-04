@@ -12,11 +12,11 @@ import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.databinding.ActivityUserBinding
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogArg
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
-import com.warmpot.android.stackoverflow.screen.common.dialog.InfoDialogArg
+import com.warmpot.android.stackoverflow.screen.common.resource.DialogRes
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
-import com.warmpot.android.stackoverflow.screen.common.resource.text
 import com.warmpot.android.stackoverflow.screen.user.model.User
 import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserUiState
 import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserViewModel
@@ -65,8 +65,9 @@ class UserActivity : BaseActivity(), DialogListener {
     private fun showError(str: Str?) {
         binding.containerView.hide()
 
+        val message: Str = str ?: return
         dialogHelper.showInfoDialog(
-            InfoDialogArg(title = getString(R.string.data_load_error_title), message = str.text(context))
+            DialogArg.Info(title = DialogRes.defaultErrorTitle, message = message)
         )
     }
 

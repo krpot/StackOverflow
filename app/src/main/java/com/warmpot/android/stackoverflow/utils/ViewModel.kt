@@ -4,10 +4,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import com.warmpot.android.stackoverflow.screen.common.viewmodel.ViewModelFactory
+import com.warmpot.android.stackoverflow.common.di.AppModule
 
 inline fun <reified T : ViewModel> ViewModelStoreOwner.viewModel(
-    factory: ViewModelProvider.Factory = ViewModelFactory,
+    factory: ViewModelProvider.Factory = AppModule.viewModelFactory,
     key: String? = null
 ): Lazy<T> = lazy {
     if (key == null)
@@ -17,7 +17,7 @@ inline fun <reified T : ViewModel> ViewModelStoreOwner.viewModel(
 }
 
 inline fun <reified T : ViewModel> Fragment.activityViewModel(
-    factory: ViewModelProvider.Factory = ViewModelFactory
+    factory: ViewModelProvider.Factory = AppModule.viewModelFactory
 ): Lazy<T> = lazy {
     ViewModelProvider(requireActivity(), factory).get(T::class.java)
 }

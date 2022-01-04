@@ -2,6 +2,7 @@ package com.warmpot.android.stackoverflow.screen.common.resource
 
 import android.content.Context
 import androidx.annotation.StringRes
+import com.warmpot.android.stackoverflow.R
 import java.io.Serializable
 
 sealed class Str {
@@ -9,8 +10,8 @@ sealed class Str {
     data class Txt(val s: String) : Str()
 
     companion object {
-        fun from(@StringRes strId: Int) = Str.Id(strId)
-        fun from(s: String) = Str.Txt(s)
+        fun from(@StringRes strId: Int) = Id(strId)
+        fun from(s: String) = Txt(s)
     }
 }
 
