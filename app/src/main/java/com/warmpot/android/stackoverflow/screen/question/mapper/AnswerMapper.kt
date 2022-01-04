@@ -1,7 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.question.mapper
 
 import com.warmpot.android.stackoverflow.common.AsyncMapper
-import com.warmpot.android.stackoverflow.data.schema.answers.AnswerSchema
+import com.warmpot.android.stackoverflow.data.answers.AnswerSchema
 import com.warmpot.android.stackoverflow.domain.utils.StackoverflowHtmlParser
 import com.warmpot.android.stackoverflow.screen.question.model.Answer
 import com.warmpot.android.stackoverflow.screen.user.mapper.UserMapper

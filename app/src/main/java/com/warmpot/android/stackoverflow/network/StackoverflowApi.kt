@@ -1,8 +1,8 @@
 package com.warmpot.android.stackoverflow.network
 
-import com.warmpot.android.stackoverflow.data.schema.answers.AnswersResponse
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
-import com.warmpot.android.stackoverflow.data.schema.users.UserResponse
+import com.warmpot.android.stackoverflow.data.answers.AnswersResponse
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
+import com.warmpot.android.stackoverflow.data.users.UserResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

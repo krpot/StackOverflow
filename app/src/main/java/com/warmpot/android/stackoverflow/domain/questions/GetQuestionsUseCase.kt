@@ -1,15 +1,14 @@
 package com.warmpot.android.stackoverflow.domain.questions
 
 import com.warmpot.android.stackoverflow.common.OneOf
-import com.warmpot.android.stackoverflow.common.tryOneOf
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
-import com.warmpot.android.stackoverflow.network.StackoverflowApi
+import com.warmpot.android.stackoverflow.data.qustions.datasource.QuestionDataSource
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionSchema
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetQuestionsUseCase(
-    private val stackOverflowApi: StackoverflowApi
+    private val dataSource: QuestionDataSource
 ) {
     private val cache = arrayListOf<QuestionSchema>()
     private var page: Int = 1
@@ -31,7 +30,7 @@ class GetQuestionsUseCase(
     }
 
     private suspend fun getQuestionsBy(page: Int): QuestionsFetchResult {
-        return when (val result = tryOneOf { stackOverflowApi.getQuestions(page) }) {
+        return when (val result = dataSource.getQuestions(page)) {
             is OneOf.Error -> QuestionsFetchResult.Failure(result.e)
             is OneOf.Success -> {
                 handleSuccess(page, result.data)
@@ -59,10 +58,10 @@ class GetQuestionsUseCase(
 }
 
 sealed class FetchingType {
-    object FirstPage: FetchingType()
-    object NextPage: FetchingType()
-    object Refresh: FetchingType()
-    object Retry: FetchingType()
+    object FirstPage : FetchingType()
+    object NextPage : FetchingType()
+    object Refresh : FetchingType()
+    object Retry : FetchingType()
 }
 
 suspend fun GetQuestionsUseCase.fetchFirstPage() = execute(FetchingType.FirstPage)

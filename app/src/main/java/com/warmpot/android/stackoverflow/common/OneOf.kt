@@ -31,7 +31,7 @@ fun <T, R> OneOf<T>.switchMap(transform: (T) -> OneOf<R>): OneOf<R> {
     }
 }
 
-suspend fun <T> tryOneOf(action: suspend () -> T): OneOf<T> {
+suspend fun <T> tryCatchOf(action: suspend () -> T): OneOf<T> {
     return try {
         OneOf.Success(action())
     } catch (e: Throwable) {

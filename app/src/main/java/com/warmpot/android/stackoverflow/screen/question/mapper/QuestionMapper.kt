@@ -2,7 +2,7 @@ package com.warmpot.android.stackoverflow.screen.question.mapper
 
 import com.warmpot.android.stackoverflow.common.AsyncMapper
 import com.warmpot.android.stackoverflow.common.EpochSecond
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.domain.utils.StackoverflowHtmlParser
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.mapper.UserMapper

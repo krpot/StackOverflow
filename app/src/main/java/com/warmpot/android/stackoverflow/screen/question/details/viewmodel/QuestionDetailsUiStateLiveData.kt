@@ -3,8 +3,8 @@ package com.warmpot.android.stackoverflow.screen.question.details.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.warmpot.android.stackoverflow.common.OneOf
-import com.warmpot.android.stackoverflow.data.schema.answers.AnswersResponse
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
+import com.warmpot.android.stackoverflow.data.answers.AnswersResponse
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionDetailsViewStateMapper
 
 class QuestionDetailsUiStateLiveData(

@@ -1,6 +1,6 @@
 package com.warmpot.android.stackoverflow.domain.users
 
-import com.warmpot.android.stackoverflow.data.schema.users.UserSchema
+import com.warmpot.android.stackoverflow.data.users.UserSchema
 import com.warmpot.android.stackoverflow.domain.usecase.UseCaseResult
 
 class GetUserResult(

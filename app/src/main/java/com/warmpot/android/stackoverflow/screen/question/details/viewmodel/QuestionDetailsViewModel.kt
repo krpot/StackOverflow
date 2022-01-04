@@ -2,8 +2,8 @@ package com.warmpot.android.stackoverflow.screen.question.details.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.warmpot.android.stackoverflow.common.OneOf
-import com.warmpot.android.stackoverflow.data.schema.answers.AnswersResponse
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
+import com.warmpot.android.stackoverflow.data.answers.AnswersResponse
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.domain.model.QuestionId
 import com.warmpot.android.stackoverflow.domain.questions.GetQuestionDetailsUseCase
 import com.warmpot.android.stackoverflow.screen.common.viewmodel.BaseViewModel

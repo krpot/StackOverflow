@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.EventValue
-import com.warmpot.android.stackoverflow.data.schema.users.UserSchema
+import com.warmpot.android.stackoverflow.data.users.UserSchema
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.user.mapper.UserMapper
 import com.warmpot.android.stackoverflow.screen.user.model.User

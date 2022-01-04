@@ -11,7 +11,7 @@ internal object UseCaseModule {
 
     fun provideGetQuestionUseCase(): GetQuestionsUseCase {
         return GetQuestionsUseCase(
-            stackOverflowApi = stackOverflowApi
+            dataSource = NetworkModule.questionDataSource
         )
     }
 

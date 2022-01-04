@@ -1,7 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.user.mapper
 
 import com.warmpot.android.stackoverflow.common.Mapper
-import com.warmpot.android.stackoverflow.data.schema.users.BadgeCountsSchema
+import com.warmpot.android.stackoverflow.data.users.BadgeCountsSchema
 import com.warmpot.android.stackoverflow.screen.user.model.BadgeCounts
 
 class BadgeCountsMapper : Mapper<BadgeCountsSchema, BadgeCounts> {

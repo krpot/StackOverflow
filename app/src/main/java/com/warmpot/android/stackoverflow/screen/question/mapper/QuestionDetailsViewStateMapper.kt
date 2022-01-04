@@ -3,8 +3,8 @@ package com.warmpot.android.stackoverflow.screen.question.mapper
 import com.warmpot.android.stackoverflow.R
 import com.warmpot.android.stackoverflow.common.AsyncMapper
 import com.warmpot.android.stackoverflow.common.OneOf
-import com.warmpot.android.stackoverflow.data.schema.answers.AnswersResponse
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
+import com.warmpot.android.stackoverflow.data.answers.AnswersResponse
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsUiState

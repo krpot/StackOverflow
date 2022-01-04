@@ -1,6 +1,6 @@
 package com.warmpot.android.stackoverflow.domain.questions
 
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionSchema
 
 sealed class QuestionsFetchResult {
     data class Failure(val e: Throwable) : QuestionsFetchResult()

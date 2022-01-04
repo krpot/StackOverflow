@@ -1,4 +1,4 @@
-package com.warmpot.android.stackoverflow.data.schema.answers
+package com.warmpot.android.stackoverflow.data.answers
 
 import com.warmpot.android.stackoverflow.data.schema.StackoverflowResponse
 

@@ -2,8 +2,8 @@ package com.warmpot.android.stackoverflow.domain.users
 
 import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.map
-import com.warmpot.android.stackoverflow.common.tryOneOf
-import com.warmpot.android.stackoverflow.data.schema.users.UserResponse
+import com.warmpot.android.stackoverflow.common.tryCatchOf
+import com.warmpot.android.stackoverflow.data.users.UserResponse
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ class GetUserUseCase(
         }
 
     private suspend fun getUserBy(userId: Int): OneOf<UserResponse> =
-        tryOneOf {
+        tryCatchOf {
             stackOverflowApi.getUser(userId)
         }
 }

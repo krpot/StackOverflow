@@ -1,4 +1,4 @@
-package com.warmpot.android.stackoverflow.data.schema.users
+package com.warmpot.android.stackoverflow.data.users
 
 
 import com.google.gson.annotations.SerializedName

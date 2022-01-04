@@ -3,7 +3,7 @@ package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.warmpot.android.stackoverflow.R
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
 import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
 import com.warmpot.android.stackoverflow.screen.common.resource.Str

@@ -2,9 +2,9 @@ package com.warmpot.android.stackoverflow.domain.questions
 
 import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.switchMap
-import com.warmpot.android.stackoverflow.common.tryOneOf
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionSchema
-import com.warmpot.android.stackoverflow.data.schema.qustions.QuestionsResponse
+import com.warmpot.android.stackoverflow.common.tryCatchOf
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionSchema
+import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,7 +22,7 @@ class GetQuestionUseCase(
         }
 
     private suspend fun getQuestionBy(questionId: Int): OneOf<QuestionSchema> {
-        return tryOneOf {
+        return tryCatchOf {
             stackOverflowApi.getQuestion(questionId)
         }.switchMap { questionsResponse ->
             handleSuccess(questionsResponse)
