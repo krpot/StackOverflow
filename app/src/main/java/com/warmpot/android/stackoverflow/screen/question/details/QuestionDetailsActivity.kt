@@ -3,6 +3,7 @@ package com.warmpot.android.stackoverflow.screen.question.details
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
+import com.warmpot.android.stackoverflow.common.di.DependencyInjector
 import com.warmpot.android.stackoverflow.domain.model.QuestionId
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
@@ -19,7 +20,7 @@ import com.warmpot.android.stackoverflow.utils.viewModel
 
 class QuestionDetailsActivity : BaseActivity(), DialogListener {
 
-    private val viewModel by viewModel<QuestionDetailsViewModel>()
+    lateinit var viewModel: QuestionDetailsViewModel
 
     private val binding: QuestionDetailsActivityBinder by lazy {
         QuestionDetailsActivityBinder(
@@ -31,6 +32,8 @@ class QuestionDetailsActivity : BaseActivity(), DialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DependencyInjector.inject(this)
+
         setContentView(binding.root)
 
         setupViews()

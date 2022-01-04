@@ -1,6 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
 import android.os.Bundle
+import com.warmpot.android.stackoverflow.common.di.DependencyInjector
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
 import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
@@ -10,7 +11,7 @@ import com.warmpot.android.stackoverflow.utils.viewModel
 
 class QuestionListActivity : BaseActivity() {
 
-    private val viewModel by viewModel<QuestionListViewModel>()
+    lateinit var viewModel: QuestionListViewModel
 
     private val binding: QuestionListActivityBinder by lazy {
         QuestionListActivityBinder(
@@ -26,6 +27,8 @@ class QuestionListActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DependencyInjector.inject(this)
+
         setContentView(binding.root)
 
         binding.setupViews()

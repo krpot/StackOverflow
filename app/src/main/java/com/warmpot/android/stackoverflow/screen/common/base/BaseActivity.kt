@@ -1,21 +1,20 @@
 package com.warmpot.android.stackoverflow.screen.common.base
 
 import android.content.Context
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.warmpot.android.stackoverflow.common.di.AppModule
+import com.warmpot.android.stackoverflow.common.di.DependencyInjector
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogHelper
 import com.warmpot.android.stackoverflow.screen.common.navigation.ActivityNavigator
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected val navigator: ActivityNavigator by lazy {
-        AppModule.provideActivityNavigator(this)
-    }
+    lateinit var navigator: ActivityNavigator
+    lateinit var dialogHelper: DialogHelper
 
-    protected val dialogHelper: DialogHelper by lazy {
-        AppModule.provideDialogHelper(
-            supportFragmentManager
-        )
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        DependencyInjector.injectBase(this)
     }
 }
 
