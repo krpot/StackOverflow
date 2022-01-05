@@ -7,7 +7,7 @@ import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GetQuestionsUseCase(
+class QuestionPagingUseCase(
     private val dataSource: QuestionDataSource,
     private val cache: QuestionsResponseCache
 ) {
@@ -15,13 +15,13 @@ class GetQuestionsUseCase(
         private const val FIRST_PAGE = 1
     }
 
-    suspend fun execute(fetchingType: FetchingType): QuestionsFetchResult =
+    suspend fun execute(pagingType: PagingType): QuestionsFetchResult =
         withContext(Dispatchers.IO) {
-            when (fetchingType) {
-                is FetchingType.FirstPage -> getQuestionsBy(page = FIRST_PAGE)
-                is FetchingType.NextPage -> getQuestionsBy(page = nextPage())
-                is FetchingType.Refresh -> refreshData()
-                is FetchingType.Retry -> getQuestionsBy(page = cache.currentPage)
+            when (pagingType) {
+                is PagingType.FirstPage -> getQuestionsBy(page = FIRST_PAGE)
+                is PagingType.NextPage -> getQuestionsBy(page = nextPage())
+                is PagingType.Refresh -> refreshData()
+                is PagingType.Retry -> getQuestionsBy(page = cache.currentPage)
             }
         }
 
@@ -45,7 +45,10 @@ class GetQuestionsUseCase(
         }
     }
 
-    private suspend fun handleSuccess(pageNo: Int, response: QuestionsResponse): QuestionsFetchResult {
+    private suspend fun handleSuccess(
+        pageNo: Int,
+        response: QuestionsResponse
+    ): QuestionsFetchResult {
         when {
             response.items.isEmpty() -> {
                 if (!response.hasMore) {
@@ -64,17 +67,10 @@ class GetQuestionsUseCase(
     private fun nextPage() = cache.currentPage.inc()
 }
 
-sealed class FetchingType {
-    object FirstPage : FetchingType()
-    object NextPage : FetchingType()
-    object Refresh : FetchingType()
-    object Retry : FetchingType()
-}
+suspend fun QuestionPagingUseCase.fetchFirstPage() = execute(PagingType.FirstPage)
 
-suspend fun GetQuestionsUseCase.fetchFirstPage() = execute(FetchingType.FirstPage)
+suspend fun QuestionPagingUseCase.fetchNextPage() = execute(PagingType.NextPage)
 
-suspend fun GetQuestionsUseCase.fetchNextPage() = execute(FetchingType.NextPage)
+suspend fun QuestionPagingUseCase.refresh() = execute(PagingType.Refresh)
 
-suspend fun GetQuestionsUseCase.refresh() = execute(FetchingType.Refresh)
-
-suspend fun GetQuestionsUseCase.retry() = execute(FetchingType.Retry)
+suspend fun QuestionPagingUseCase.retry() = execute(PagingType.Retry)

@@ -27,7 +27,11 @@ class QuestionListUiStateLiveData(
         postLoadMore(message = Str.from(R.string.message_no_more_items))
     }
 
-    fun postLoadMoreLoading() {
+    fun postScreenLoading() {
+        uiStateLiveData.postValue(forwardState(isScreenLoading = true))
+    }
+
+    fun postPageLoading() {
         postLoadMore(isLoading = true)
     }
 
@@ -62,6 +66,7 @@ class QuestionListUiStateLiveData(
     }
 
     private fun forwardState(
+        isScreenLoading: Boolean = false,
         loading: LoadingState? = null,
         error: Throwable? = null,
         listItems: List<Question>? = uiState.value?.listItems
@@ -70,6 +75,7 @@ class QuestionListUiStateLiveData(
         val loadingStates: List<LoadingState> = loading?.let { listOf(it) } ?: emptyList()
 
         return state.copy(
+            screenLoading = EventValue(isScreenLoading),
             loading = EventValue(loadingStates),
             error = error?.let { EventValue(it) },
             listItems = listItems

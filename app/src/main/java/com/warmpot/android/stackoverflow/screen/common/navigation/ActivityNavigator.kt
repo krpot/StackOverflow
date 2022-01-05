@@ -1,6 +1,7 @@
 package com.warmpot.android.stackoverflow.screen.common.navigation
 
 import android.content.Intent
+import android.content.Intent.ACTION_SEARCH
 import androidx.appcompat.app.AppCompatActivity
 import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
 import com.warmpot.android.stackoverflow.screen.question.details.QuestionDetailsActivity
@@ -21,6 +22,12 @@ class ActivityNavigator(
     fun goToUserScreen(user: User) {
         val intent = Intent(activity, UserActivity::class.java)
         intent.putExtra(IntentConstant.EXTRA_USER_ID, user.userId)
+        activity.startActivity(intent)
+    }
+
+    fun goToSearchScreen() {
+        //val intent = Intent(activity, SearchActivity::class.java)
+        val intent = Intent(ACTION_SEARCH)
         activity.startActivity(intent)
     }
 }

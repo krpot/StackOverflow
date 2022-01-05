@@ -24,9 +24,27 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".screen.question.search.SearchActivity" />
         </activity>
 
         <activity android:name=".screen.question.details.QuestionDetailsActivity" />
+
+        <activity
+            android:name=".screen.question.search.SearchActivity"
+            android:parentActivityName=".screen.question.list.QuestionListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".screen.question.list.QuestionListActivity" />
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".screen.user.UserActivity"

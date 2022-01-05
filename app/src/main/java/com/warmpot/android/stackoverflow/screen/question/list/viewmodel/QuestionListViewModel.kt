@@ -5,7 +5,7 @@ import com.warmpot.android.stackoverflow.domain.questions.*
 import com.warmpot.android.stackoverflow.screen.common.viewmodel.BaseViewModel
 
 class QuestionListViewModel(
-    private val getQuestionsUseCase: GetQuestionsUseCase,
+    private val getQuestionsUseCase: QuestionPagingUseCase,
     private val stateLiveData: QuestionListUiStateLiveData = QuestionListUiStateLiveData()
 ) : BaseViewModel() {
 
@@ -25,7 +25,7 @@ class QuestionListViewModel(
 
     fun triggerLoadMore() {
         singleLaunch {
-            stateLiveData.postLoadMoreLoading()
+            stateLiveData.postPageLoading()
             handleQuestionListResult(
                 getQuestionsUseCase.fetchNextPage(),
                 loadMoreFailureHandler
@@ -35,7 +35,7 @@ class QuestionListViewModel(
 
     fun loadMoreRetryClicked() {
         singleLaunch {
-            stateLiveData.postLoadMoreLoading()
+            stateLiveData.postPageLoading()
             handleQuestionListResult(getQuestionsUseCase.retry(), loadMoreFailureHandler)
         }
     }

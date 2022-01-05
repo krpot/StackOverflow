@@ -7,6 +7,8 @@ import com.warmpot.android.stackoverflow.screen.question.details.QuestionDetails
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.list.QuestionListActivity
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
+import com.warmpot.android.stackoverflow.screen.question.search.SearchActivity
+import com.warmpot.android.stackoverflow.screen.question.search.viewmodel.SearchViewModel
 import com.warmpot.android.stackoverflow.screen.user.UserActivity
 import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserViewModel
 
@@ -34,6 +36,15 @@ object DependencyInjector {
                 this,
                 AppModule.viewModelFactory
             ).get(QuestionDetailsViewModel::class.java)
+        }
+    }
+
+    fun inject(activity: SearchActivity) {
+        activity.apply {
+            viewModel = ViewModelProvider(
+                this,
+                AppModule.viewModelFactory
+            ).get(SearchViewModel::class.java)
         }
     }
 

@@ -4,6 +4,7 @@ import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.common.tryCatchOf
 import com.warmpot.android.stackoverflow.data.answers.AnswersResponse
 import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
+import com.warmpot.android.stackoverflow.data.qustions.schema.SearchParam
 import com.warmpot.android.stackoverflow.network.StackoverflowApi
 
 class QuestionRemoteDataSource(
@@ -13,6 +14,12 @@ class QuestionRemoteDataSource(
     override suspend fun getQuestions(page: Int): OneOf<QuestionsResponse> {
         return tryCatchOf {
             api.getQuestions(page)
+        }
+    }
+
+    override suspend fun searchQuestions(param: SearchParam): OneOf<QuestionsResponse> {
+        return tryCatchOf {
+            api.searchQuestions(param.toQueryMap())
         }
     }
 

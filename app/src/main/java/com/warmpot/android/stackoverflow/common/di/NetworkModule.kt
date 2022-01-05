@@ -34,13 +34,14 @@ internal object NetworkModule {
     }
 
     private fun provideHttpLoginInterceptor(): Interceptor {
-        return HttpLoggingInterceptor()
+        return HttpLoggingInterceptor().also {
+            it.level = HttpLoggingInterceptor.Level.BODY
+        }
     }
 
     private fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            //.addInterceptor(provideHttpLoginInterceptor())
-            .addNetworkInterceptor(provideHttpLoginInterceptor())
+            .addInterceptor(provideHttpLoginInterceptor())
             .build()
     }
 }

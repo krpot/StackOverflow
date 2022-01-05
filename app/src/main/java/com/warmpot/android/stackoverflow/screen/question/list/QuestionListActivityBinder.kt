@@ -2,6 +2,7 @@ package com.warmpot.android.stackoverflow.screen.question.list
 
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import com.warmpot.android.stackoverflow.databinding.ActivityQuestionListBinding
 import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
@@ -87,7 +88,7 @@ class QuestionListActivityBinder(
         }
     }
 
-    private fun loadMoreDone() {
+    fun loadMoreDone() {
         binding.apply {
             loadingBar.hide()
             swipeRefresh.isRefreshing = false
@@ -96,9 +97,15 @@ class QuestionListActivityBinder(
     }
 
     fun handleUiState(uiState: QuestionListUiState) {
-        uiState.loading?.value()?.also(::bindLoading)
+        uiState.screenLoading.value()?.also(::bindScreenLoading)
+        uiState.loading.value()?.also(::bindLoading)
         uiState.error?.value()?.also(onShowError)
         uiState.listItems?.also(::bindListItems)
+    }
+
+    private fun bindScreenLoading(showing: Boolean) {
+        loadingStateAdapter.submitList(emptyList())
+        binding.loadingBar.isVisible = showing
     }
 
     private fun bindListItems(questions: List<Question>?) {
