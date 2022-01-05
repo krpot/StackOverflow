@@ -3,11 +3,13 @@ package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.warmpot.android.stackoverflow.R
+import com.warmpot.android.stackoverflow.common.EventValue
 import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
 import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionMapper
+import com.warmpot.android.stackoverflow.screen.question.model.Question
 
 class QuestionListUiStateLiveData(
     private val uiStateLiveData: MutableLiveData<QuestionListUiState> = MutableLiveData()
@@ -34,6 +36,13 @@ class QuestionListUiStateLiveData(
         postLoadMore(message = str, isRetry = true)
     }
 
+    fun postPullToRefreshError(th: Throwable) {
+        val state = uiState.value ?: QuestionListUiState()
+        uiStateLiveData.postValue(
+            state.copy(loading = EventValue(emptyList()), error = EventValue(th))
+        )
+    }
+
     fun postEmptyDataItem() {
         postLoadMore(message = Str.from(R.string.message_empty_items))
     }
@@ -43,14 +52,27 @@ class QuestionListUiStateLiveData(
         message: Str? = null,
         isRetry: Boolean = false
     ) {
-        uiStateLiveData.postValue(
-            stateOf(
-                LoadingState(
-                    isLoading = isLoading,
-                    message = message,
-                    isRetry = isRetry
-                )
-            )
+        val loadingState = LoadingState(
+            isLoading = isLoading,
+            message = message,
+            isRetry = isRetry
+        )
+
+        uiStateLiveData.postValue(forwardState(loading = loadingState))
+    }
+
+    private fun forwardState(
+        loading: LoadingState? = null,
+        error: Throwable? = null,
+        listItems: List<Question>? = uiState.value?.listItems
+    ): QuestionListUiState {
+        val state = uiState.value ?: QuestionListUiState()
+        val loadingStates: List<LoadingState> = loading?.let { listOf(it) } ?: emptyList()
+
+        return state.copy(
+            loading = EventValue(loadingStates),
+            error = error?.let { EventValue(it) },
+            listItems = listItems
         )
     }
 }

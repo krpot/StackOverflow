@@ -3,13 +3,16 @@ package com.warmpot.android.stackoverflow.screen.question.list
 import android.os.Bundle
 import com.warmpot.android.stackoverflow.common.di.DependencyInjector
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
-import com.warmpot.android.stackoverflow.screen.common.recyclerview.LoadMoreListener
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogArg
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
+import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
+import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
+import com.warmpot.android.stackoverflow.screen.common.resource.DialogRes
 import com.warmpot.android.stackoverflow.screen.question.list.viewmodel.QuestionListViewModel
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.model.User
-import com.warmpot.android.stackoverflow.utils.viewModel
 
-class QuestionListActivity : BaseActivity() {
+class QuestionListActivity : BaseActivity(), DialogListener {
 
     lateinit var viewModel: QuestionListViewModel
 
@@ -18,10 +21,11 @@ class QuestionListActivity : BaseActivity() {
             layoutInflater = layoutInflater,
             onPullToRefresh = viewModel::pullToRefresh,
             onTriggerLoadMore = viewModel::triggerLoadMore,
-            onLoadMoreRetryClicked = viewModel::loadFirstPageQuestions,
+            onLoadMoreRetryClicked = viewModel::loadMoreRetryClicked,
             onTagClicked = { },
             onQuestionClicked = ::questionClicked,
-            onOwnerClicked = ::ownerClicked
+            onOwnerClicked = ::ownerClicked,
+            onShowError = ::showError
         )
     }
 
@@ -51,5 +55,17 @@ class QuestionListActivity : BaseActivity() {
 
     private fun loadFirstPageQuestions() {
         viewModel.loadFirstPageQuestions()
+    }
+
+    private fun showError(throwable: Throwable) {
+        dialogHelper.showInfoDialog(
+            DialogArg.Info(
+                title = DialogRes.defaultErrorTitle,
+                message = throwable.toUiMessage()
+            )
+        )
+    }
+
+    override fun onDialogCompleted(result: DialogResult) {
     }
 }

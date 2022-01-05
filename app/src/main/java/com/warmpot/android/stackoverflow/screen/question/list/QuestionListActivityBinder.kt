@@ -24,7 +24,8 @@ class QuestionListActivityBinder(
     private val onLoadMoreRetryClicked: () -> Unit,
     private val onTagClicked: (String) -> Unit,
     private val onQuestionClicked: (Question) -> Unit,
-    private val onOwnerClicked: (User) -> Unit
+    private val onOwnerClicked: (User) -> Unit,
+    private val onShowError: (Throwable) -> Unit
 ) {
     val root: View
         get() = binding.root
@@ -96,6 +97,7 @@ class QuestionListActivityBinder(
 
     fun handleUiState(uiState: QuestionListUiState) {
         uiState.loading?.value()?.also(::bindLoading)
+        uiState.error?.value()?.also(onShowError)
         uiState.listItems?.also(::bindListItems)
     }
 

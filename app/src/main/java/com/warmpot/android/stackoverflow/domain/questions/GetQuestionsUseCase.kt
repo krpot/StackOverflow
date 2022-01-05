@@ -2,7 +2,6 @@ package com.warmpot.android.stackoverflow.domain.questions
 
 import com.warmpot.android.stackoverflow.common.OneOf
 import com.warmpot.android.stackoverflow.data.qustions.datasource.QuestionDataSource
-import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionSchema
 import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -10,28 +9,38 @@ import kotlinx.coroutines.withContext
 class GetQuestionsUseCase(
     private val dataSource: QuestionDataSource
 ) {
-    private val cache = arrayListOf<QuestionSchema>()
-    private var page: Int = 1
+    companion object {
+        private const val FIRST_PAGE = 1
+    }
+
+    private val cache = hashMapOf<Int, QuestionsResponse>()
+    private var currentPage: Int = 1
     private var hasMoreData = false
 
     suspend fun execute(fetchingType: FetchingType): QuestionsFetchResult =
         withContext(Dispatchers.IO) {
             when (fetchingType) {
-                is FetchingType.FirstPage -> getQuestionsBy(1)
-                is FetchingType.NextPage -> getQuestionsBy(nextPage())
+                is FetchingType.FirstPage -> getQuestionsBy(page = FIRST_PAGE)
+                is FetchingType.NextPage -> getQuestionsBy(page = nextPage())
                 is FetchingType.Refresh -> refreshData()
-                is FetchingType.Retry -> getQuestionsBy(page = page)
+                is FetchingType.Retry -> getQuestionsBy(page = currentPage)
             }
         }
 
     private suspend fun refreshData(): QuestionsFetchResult {
         cache.clear()
-        return getQuestionsBy(page = this.page)
+        return getQuestionsBy(page = FIRST_PAGE)
     }
 
     private suspend fun getQuestionsBy(page: Int): QuestionsFetchResult {
         return when (val result = dataSource.getQuestions(page)) {
-            is OneOf.Error -> QuestionsFetchResult.Failure(result.e)
+            is OneOf.Error -> {
+                val cachedData = cache[page]
+                if (cachedData != null) {
+                    return handleSuccess(pageNo = page, response = cachedData)
+                }
+                QuestionsFetchResult.Failure(result.e)
+            }
             is OneOf.Success -> {
                 handleSuccess(page, result.data)
             }
@@ -39,22 +48,22 @@ class GetQuestionsUseCase(
     }
 
     private fun handleSuccess(pageNo: Int, response: QuestionsResponse): QuestionsFetchResult {
-        this.page = pageNo
+        this.currentPage = pageNo
         this.hasMoreData = response.hasMore
 
         if (response.items.isEmpty()) {
             hasMoreData = false
             return if (cache.isEmpty())
-                QuestionsFetchResult.Empty(cache)
+                QuestionsFetchResult.Empty(response.items)
             else
-                QuestionsFetchResult.EndOfData(cache)
+                QuestionsFetchResult.EndOfData(response.items)
         }
 
-        cache.addAll(response.items)
-        return QuestionsFetchResult.HasData(cache)
+        cache[currentPage] = response
+        return QuestionsFetchResult.HasData(response.items)
     }
 
-    private fun nextPage() = page.inc()
+    private fun nextPage() = currentPage.inc()
 }
 
 sealed class FetchingType {

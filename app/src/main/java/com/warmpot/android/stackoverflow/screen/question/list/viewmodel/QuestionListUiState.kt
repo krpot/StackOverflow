@@ -5,9 +5,12 @@ import com.warmpot.android.stackoverflow.screen.common.adapter.LoadingState
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 
 data class QuestionListUiState(
-    val loading: EventValue<List<LoadingState>>? = null,
+    val loading: EventValue<List<LoadingState>> = EventValue(emptyList()),
+    val error: EventValue<Throwable>? = null,
     val listItems: List<Question>? = null
 )
 
-internal fun stateOf(loading: LoadingState) = QuestionListUiState(loading = EventValue(listOf(loading)))
+internal fun stateOf(loading: LoadingState) =
+    QuestionListUiState(loading = EventValue(listOf(loading)))
+
 internal fun stateOf(items: List<Question>) = QuestionListUiState(listItems = items)

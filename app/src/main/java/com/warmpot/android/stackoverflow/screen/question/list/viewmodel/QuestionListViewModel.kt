@@ -11,49 +11,53 @@ class QuestionListViewModel(
 
     val uiState: LiveData<QuestionListUiState> get() = stateLiveData.uiState
 
+    private val loadMoreFailureHandler: (Throwable) -> Unit = { exception ->
+        stateLiveData.postLoadQuestionsError(exception)
+    }
+
     // region public functions
     fun loadFirstPageQuestions() {
         singleLaunch {
             val result = getQuestionsUseCase.fetchFirstPage()
-            handleQuestionListResult(result)
+            handleQuestionListResult(result, loadMoreFailureHandler)
         }
     }
 
     fun triggerLoadMore() {
         singleLaunch {
             stateLiveData.postLoadMoreLoading()
-            handleQuestionListResult(getQuestionsUseCase.fetchNextPage())
-        }
-    }
-
-    fun pullToRefresh() {
-        singleLaunch {
-            handleQuestionListResult(getQuestionsUseCase.refresh())
+            handleQuestionListResult(
+                getQuestionsUseCase.fetchNextPage(),
+                loadMoreFailureHandler
+            )
         }
     }
 
     fun loadMoreRetryClicked() {
         singleLaunch {
             stateLiveData.postLoadMoreLoading()
-            handleQuestionListResult(getQuestionsUseCase.retry())
+            handleQuestionListResult(getQuestionsUseCase.retry(), loadMoreFailureHandler)
+        }
+    }
+
+    fun pullToRefresh() {
+        singleLaunch {
+            handleQuestionListResult(getQuestionsUseCase.refresh()) { exception ->
+                stateLiveData.postPullToRefreshError(exception)
+            }
         }
     }
     // endregion public functions
 
-    private suspend fun handleQuestionListResult(result: QuestionsFetchResult) {
+    private suspend fun handleQuestionListResult(
+        result: QuestionsFetchResult,
+        onFetchFailure: (Throwable) -> Unit
+    ) {
         when (result) {
-            is QuestionsFetchResult.Failure -> {
-                stateLiveData.postLoadQuestionsError(result.e)
-            }
-            is QuestionsFetchResult.Empty -> {
-                stateLiveData.postEmptyDataItem()
-            }
-            is QuestionsFetchResult.EndOfData -> {
-                stateLiveData.postNoMoreDataItem()
-            }
-            is QuestionsFetchResult.HasData -> {
-                stateLiveData.postQuestions(result.data)
-            }
+            is QuestionsFetchResult.Failure -> onFetchFailure(result.e)
+            is QuestionsFetchResult.Empty -> stateLiveData.postEmptyDataItem()
+            is QuestionsFetchResult.EndOfData -> stateLiveData.postNoMoreDataItem()
+            is QuestionsFetchResult.HasData -> stateLiveData.postQuestions(result.data)
         }
     }
 }
