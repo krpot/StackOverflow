@@ -1,21 +1,19 @@
 package com.warmpot.android.stackoverflow.domain.questions
 
 import com.warmpot.android.stackoverflow.common.OneOf
+import com.warmpot.android.stackoverflow.data.qustions.cache.QuestionsResponseCache
 import com.warmpot.android.stackoverflow.data.qustions.datasource.QuestionDataSource
 import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetQuestionsUseCase(
-    private val dataSource: QuestionDataSource
+    private val dataSource: QuestionDataSource,
+    private val cache: QuestionsResponseCache
 ) {
     companion object {
         private const val FIRST_PAGE = 1
     }
-
-    private val cache = hashMapOf<Int, QuestionsResponse>()
-    private var currentPage: Int = 1
-    private var hasMoreData = false
 
     suspend fun execute(fetchingType: FetchingType): QuestionsFetchResult =
         withContext(Dispatchers.IO) {
@@ -23,7 +21,7 @@ class GetQuestionsUseCase(
                 is FetchingType.FirstPage -> getQuestionsBy(page = FIRST_PAGE)
                 is FetchingType.NextPage -> getQuestionsBy(page = nextPage())
                 is FetchingType.Refresh -> refreshData()
-                is FetchingType.Retry -> getQuestionsBy(page = currentPage)
+                is FetchingType.Retry -> getQuestionsBy(page = cache.currentPage)
             }
         }
 
@@ -35,7 +33,7 @@ class GetQuestionsUseCase(
     private suspend fun getQuestionsBy(page: Int): QuestionsFetchResult {
         return when (val result = dataSource.getQuestions(page)) {
             is OneOf.Error -> {
-                val cachedData = cache[page]
+                val cachedData = cache.getData(page)
                 if (cachedData != null) {
                     return handleSuccess(pageNo = page, response = cachedData)
                 }
@@ -47,23 +45,23 @@ class GetQuestionsUseCase(
         }
     }
 
-    private fun handleSuccess(pageNo: Int, response: QuestionsResponse): QuestionsFetchResult {
-        this.currentPage = pageNo
-        this.hasMoreData = response.hasMore
-
-        if (response.items.isEmpty()) {
-            hasMoreData = false
-            return if (cache.isEmpty())
-                QuestionsFetchResult.Empty(response.items)
-            else
-                QuestionsFetchResult.EndOfData(response.items)
+    private suspend fun handleSuccess(pageNo: Int, response: QuestionsResponse): QuestionsFetchResult {
+        when {
+            response.items.isEmpty() -> {
+                if (!response.hasMore) {
+                    QuestionsFetchResult.EndOfData(response.items)
+                } else {
+                    QuestionsFetchResult.Empty(response.items)
+                }
+            }
+            !response.hasMore -> QuestionsFetchResult.EndOfData(response.items)
         }
 
-        cache[currentPage] = response
+        cache.update(page = pageNo, data = response)
         return QuestionsFetchResult.HasData(response.items)
     }
 
-    private fun nextPage() = currentPage.inc()
+    private fun nextPage() = cache.currentPage.inc()
 }
 
 sealed class FetchingType {
