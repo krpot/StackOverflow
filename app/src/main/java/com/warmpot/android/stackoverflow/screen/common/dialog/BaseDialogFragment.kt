@@ -2,7 +2,7 @@ package com.warmpot.android.stackoverflow.screen.common.dialog
 
 import android.content.Context
 import androidx.fragment.app.DialogFragment
-import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant.EXTRA_DIALOG_ARG
+import com.warmpot.android.stackoverflow.screen.common.constants.IntentConst.EXTRA_DIALOG_ARG
 import com.warmpot.android.stackoverflow.screen.common.resource.text
 
 abstract class BaseDialogFragment : DialogFragment() {

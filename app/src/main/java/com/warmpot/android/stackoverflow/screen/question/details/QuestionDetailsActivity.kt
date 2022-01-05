@@ -6,7 +6,7 @@ import android.view.MenuItem
 import com.warmpot.android.stackoverflow.common.di.DependencyInjector
 import com.warmpot.android.stackoverflow.domain.model.QuestionId
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
-import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.constants.IntentConst
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogArg
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
@@ -15,7 +15,6 @@ import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.model.User
-import com.warmpot.android.stackoverflow.utils.viewModel
 
 
 class QuestionDetailsActivity : BaseActivity(), DialogListener {
@@ -57,7 +56,7 @@ class QuestionDetailsActivity : BaseActivity(), DialogListener {
     }
 
     private val question: Question by lazy {
-        intent.getSerializableExtra(IntentConstant.EXTRA_QUESTION) as Question
+        intent.getSerializableExtra(IntentConst.EXTRA_QUESTION) as Question
     }
 
     private fun loadQuestion() {

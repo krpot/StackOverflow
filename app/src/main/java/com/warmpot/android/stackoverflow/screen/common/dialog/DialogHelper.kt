@@ -3,7 +3,7 @@ package com.warmpot.android.stackoverflow.screen.common.dialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.constants.IntentConst
 
 class DialogHelper(
     private val fragmentManager: FragmentManager
@@ -29,7 +29,7 @@ class DialogHelper(
         dialogFragment?.dismiss()
 
         fragment.also {
-            it.arguments = bundleOf(IntentConstant.EXTRA_DIALOG_ARG to args)
+            it.arguments = bundleOf(IntentConst.EXTRA_DIALOG_ARG to args)
         }.show(fragmentManager, tag)
     }
 

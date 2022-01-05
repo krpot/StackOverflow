@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import com.warmpot.android.stackoverflow.common.di.DependencyInjector
 import com.warmpot.android.stackoverflow.screen.common.base.BaseActivity
-import com.warmpot.android.stackoverflow.screen.common.constants.IntentConstant
+import com.warmpot.android.stackoverflow.screen.common.constants.IntentConst
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogArg
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
@@ -23,7 +23,7 @@ class UserActivity : BaseActivity(), DialogListener {
         )
     }
 
-    private val userId by lazy { intent.getIntExtra(IntentConstant.EXTRA_USER_ID, 0) }
+    private val userId by lazy { intent.getIntExtra(IntentConst.EXTRA_USER_ID, 0) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
