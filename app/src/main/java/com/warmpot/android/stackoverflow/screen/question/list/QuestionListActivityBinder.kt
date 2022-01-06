@@ -1,7 +1,5 @@
 package com.warmpot.android.stackoverflow.screen.question.list
 
-import android.app.SearchManager
-import android.content.ComponentName
 import android.content.Context
 import android.database.MatrixCursor
 import android.provider.BaseColumns
@@ -10,8 +8,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.getSystemService
-import androidx.core.view.MenuItemCompat
 import androidx.core.view.isVisible
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
@@ -124,17 +120,9 @@ class QuestionListActivityBinder(
             onQueryTextChange(query)
         }
 
-        searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
-            override fun onSuggestionSelect(position: Int): Boolean = true
-
-            override fun onSuggestionClick(position: Int): Boolean {
-                val cursor = suggestionAdapter.getItem(position) as MatrixCursor
-                val selectedSuggestion = cursor.getString(SUGGESTION_COLUMN_INDEX)
-                searchView.setQuery(selectedSuggestion, true) //setting suggestion
-                searchView.onActionViewCollapsed()
-                return true
-            }
-        })
+        searchView.onSuggestClick { cursor, _ ->
+            cursor.getString(SUGGESTION_COLUMN_INDEX)
+        }
 
         return true
     }
