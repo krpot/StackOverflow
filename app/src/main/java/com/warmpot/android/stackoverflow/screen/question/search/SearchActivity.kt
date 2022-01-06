@@ -10,13 +10,14 @@ import com.warmpot.android.stackoverflow.screen.common.dialog.DialogArg
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
 import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
+import com.warmpot.android.stackoverflow.screen.common.protocol.HomePressProtocol
 import com.warmpot.android.stackoverflow.screen.common.resource.DialogRes
 import com.warmpot.android.stackoverflow.screen.question.list.QuestionListActivityBinder
 import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.question.search.viewmodel.SearchViewModel
 import com.warmpot.android.stackoverflow.screen.user.model.User
 
-class SearchActivity : BaseActivity(), DialogListener {
+class SearchActivity : BaseActivity(), HomePressProtocol, DialogListener {
 
     lateinit var viewModel: SearchViewModel
 
@@ -57,11 +58,8 @@ class SearchActivity : BaseActivity(), DialogListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+        if (homePressHandled(item = item)) return true
+        return false
     }
 
     private fun setupViews() {

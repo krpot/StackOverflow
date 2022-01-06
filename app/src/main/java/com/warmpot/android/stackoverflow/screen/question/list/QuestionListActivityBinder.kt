@@ -125,7 +125,6 @@ class QuestionListActivityBinder(
         searchView.onSuggestClick { cursor, _ ->
             cursor.getString(SUGGESTION_COLUMN_INDEX)
         }
-
         return true
     }
 
@@ -172,7 +171,7 @@ class QuestionListActivityBinder(
         loadingStateAdapter.submitList(loadingStates)
     }
 
-    val suggestionAdapter: CursorAdapter by lazy {
+    private val suggestionAdapter: CursorAdapter by lazy {
         val from = arrayOf(SUGGESTION_COLUMN_NAME)
         val to = intArrayOf(android.R.id.text1)
         SimpleCursorAdapter(

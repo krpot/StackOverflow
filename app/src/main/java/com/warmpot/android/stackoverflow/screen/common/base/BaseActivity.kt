@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.warmpot.android.stackoverflow.common.di.DependencyInjector
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogHelper
 import com.warmpot.android.stackoverflow.screen.common.navigation.ActivityNavigator
+import com.warmpot.android.stackoverflow.screen.common.protocol.ActivityProtocol
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity(), ActivityProtocol {
+
+    override val self: AppCompatActivity get() = this
 
     lateinit var navigator: ActivityNavigator
     lateinit var dialogHelper: DialogHelper

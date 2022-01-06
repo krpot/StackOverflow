@@ -8,11 +8,12 @@ import com.warmpot.android.stackoverflow.screen.common.constants.IntentConst
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogArg
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
+import com.warmpot.android.stackoverflow.screen.common.protocol.HomePressProtocol
 import com.warmpot.android.stackoverflow.screen.common.resource.DialogRes
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.user.viewmodel.UserViewModel
 
-class UserActivity : BaseActivity(), DialogListener {
+class UserActivity : BaseActivity(), HomePressProtocol, DialogListener {
 
     lateinit var viewModel: UserViewModel
 
@@ -38,11 +39,8 @@ class UserActivity : BaseActivity(), DialogListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+        if (homePressHandled(item = item)) return true
+        return false
     }
 
     private fun setupViews() {
@@ -54,8 +52,6 @@ class UserActivity : BaseActivity(), DialogListener {
     }
 
     private fun showError(str: Str?) {
-        //binding.containerView.hide()
-
         val message: Str = str ?: return
         dialogHelper.showInfoDialog(
             DialogArg.Info(title = DialogRes.defaultErrorTitle, message = message)

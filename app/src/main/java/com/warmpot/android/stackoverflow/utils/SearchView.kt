@@ -86,6 +86,8 @@ fun SearchView.onSuggestClick(
     suggestionSelected: ((Cursor, Int) -> Any)? = null,
     suggestionClicked: (Cursor, Int) -> String
 ) {
+    val self = this@onSuggestClick
+
     fun cursorAt(position: Int): MatrixCursor = suggestionsAdapter.getItem(position) as MatrixCursor
 
     setOnSuggestionListener(object : SearchView.OnSuggestionListener {
@@ -97,9 +99,8 @@ fun SearchView.onSuggestClick(
         override fun onSuggestionClick(position: Int): Boolean {
             val cursor = cursorAt(position)
             val selectedSuggestion = suggestionClicked(cursor, position)
-            //val selectedSuggestion = cursor.getString(QuestionListActivityBinder.SUGGESTION_COLUMN_INDEX)
-            setQuery(selectedSuggestion, true) //setting suggestion
-            onActionViewCollapsed()
+            self.setQuery(selectedSuggestion, true) //setting suggestion
+            self.onActionViewCollapsed()
             return true
         }
     })

@@ -10,6 +10,7 @@ import com.warmpot.android.stackoverflow.screen.common.constants.IntentConst
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogArg
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogListener
 import com.warmpot.android.stackoverflow.screen.common.dialog.DialogResult
+import com.warmpot.android.stackoverflow.screen.common.protocol.HomePressProtocol
 import com.warmpot.android.stackoverflow.screen.common.resource.DialogRes
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.details.viewmodel.QuestionDetailsViewModel
@@ -17,7 +18,7 @@ import com.warmpot.android.stackoverflow.screen.question.model.Question
 import com.warmpot.android.stackoverflow.screen.user.model.User
 
 
-class QuestionDetailsActivity : BaseActivity(), DialogListener {
+class QuestionDetailsActivity : BaseActivity(), HomePressProtocol, DialogListener {
 
     lateinit var viewModel: QuestionDetailsViewModel
 
@@ -42,11 +43,8 @@ class QuestionDetailsActivity : BaseActivity(), DialogListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+        if (homePressHandled(item = item)) return true
+        return false
     }
 
     @SuppressLint("SetJavaScriptEnabled")
