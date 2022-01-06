@@ -64,6 +64,7 @@ class QuestionListActivity : BaseActivity(), DialogListener {
     }
 
     private fun loadFirstPageQuestions() {
+        binding.showScreenLoadingScreen()
         viewModel.loadFirstPageQuestions()
     }
 

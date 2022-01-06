@@ -42,59 +42,19 @@ class SearchActivity : BaseActivity(), DialogListener {
         setupViews()
         observeUiState()
 
-        // Verify the action and get the query
-        if (Intent.ACTION_SEARCH == intent.action) {
-            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
-                supportActionBar?.title = query
-                viewModel.searchQueryChanged(query)
-            }
-        }
+        handleSearchIntentAction()
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.menu_search, menu)
-//        return super.onCreateOptionsMenu(menu)
-//    }
+    // Verify the action and get the query
+    private fun handleSearchIntentAction() {
+        if (Intent.ACTION_SEARCH != intent.action) return
 
-//    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-//        val searchView = menu?.findItem(R.id.menu_search)?.actionView as? SearchView
-//        searchView?.suggestionsAdapter = object: CursorAdapter(context) {
-//            override fun newView(context: Context?, cursor: Cursor?, parent: ViewGroup?): View {
-//                return layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false)
-//            }
-//
-//            override fun bindView(view: View?, context: Context?, cursor: Cursor?) {
-//
-//            }
-//        }
-//
-//        searchView?.suggestionsAdapter?.setFilterQueryProvider {
-//
-//        }
-//
-//        searchView?.setOnSearchClickListener {
-//
-//        }
-//
-//        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                viewModel.searchQueryChanged(newText)
-//                return true
-//            }
-//        })
-//
-//        searchView?.setOnCloseListener {
-//            true
-//        }
-//
-//        searchView?.isIconified = false
-//
-//        return super.onPrepareOptionsMenu(menu)
-//    }
+        intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+            binding.showScreenLoadingScreen()
+            supportActionBar?.title = query
+            viewModel.searchQueryChanged(query)
+        }
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {

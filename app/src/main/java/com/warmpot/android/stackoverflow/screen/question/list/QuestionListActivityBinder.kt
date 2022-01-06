@@ -76,6 +76,8 @@ class QuestionListActivityBinder(
                 onPullToRefresh()
             }
         }
+
+        loadMoreDone()
     }
 
     private fun setupAdapters() {
@@ -127,11 +129,22 @@ class QuestionListActivityBinder(
         return true
     }
 
-    private fun loadMoreDone() {
+    private fun hideScreenLoadingScreen() {
         binding.apply {
             loadingBar.hide()
             swipeRefresh.isRefreshing = false
         }
+    }
+
+    fun showScreenLoadingScreen() {
+        binding.apply {
+            loadingBar.show()
+            swipeRefresh.isRefreshing = false
+        }
+    }
+
+    private fun loadMoreDone() {
+        hideScreenLoadingScreen()
         loadMoreListener.loadMoreDone()
     }
 
