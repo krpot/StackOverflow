@@ -20,7 +20,8 @@ internal object ViewModelModule {
 
     private fun provideQuestionListViewModel(): QuestionListViewModel {
         return QuestionListViewModel(
-            getQuestionsUseCase = UseCaseModule.provideQuestionPagingUseCase()
+            getQuestionsUseCase = UseCaseModule.provideQuestionPagingUseCase(),
+            getTagsUseCase = UseCaseModule.provideGetTagsUseCase()
         )
     }
 

@@ -2,6 +2,7 @@ package com.warmpot.android.stackoverflow.network
 
 import com.warmpot.android.stackoverflow.data.answers.AnswersResponse
 import com.warmpot.android.stackoverflow.data.qustions.schema.QuestionsResponse
+import com.warmpot.android.stackoverflow.data.tags.schema.TagsResponse
 import com.warmpot.android.stackoverflow.data.users.UserResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -25,4 +26,6 @@ interface StackoverflowApi {
     @GET("users/{ids}?key=${STACKOVERFLOW_API_KEY}&order=desc&sort=reputation&site=stackoverflow&filter=!6VvPDzOWTBANI")
     suspend fun getUser(@Path("ids") id: Int): UserResponse
 
+    @GET("tags/?key=${STACKOVERFLOW_API_KEY}&order=desc&sort=popular&site=stackoverflow")
+    suspend fun getTags(@Query("inname") query: String): TagsResponse
 }

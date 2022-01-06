@@ -1,4 +1,4 @@
-package com.warmpot.android.stackoverflow.screen.question.list.viewmodel
+package com.warmpot.android.stackoverflow.screen.question.search.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,27 +11,28 @@ import com.warmpot.android.stackoverflow.screen.common.exception.toUiMessage
 import com.warmpot.android.stackoverflow.screen.common.resource.Str
 import com.warmpot.android.stackoverflow.screen.question.mapper.QuestionMapper
 import com.warmpot.android.stackoverflow.domain.mapper.TagMapper
-import com.warmpot.android.stackoverflow.domain.model.TagEntity
 import com.warmpot.android.stackoverflow.screen.question.model.Question
+import com.warmpot.android.stackoverflow.domain.model.TagEntity
 
-class QuestionListUiStateLiveData(
-    private val uiStateLiveData: MutableLiveData<QuestionListUiState> = MutableLiveData()
+class SearchUiStateLiveData(
+    private val uiStateLiveData: MutableLiveData<SearchUiState> = MutableLiveData()
 ) {
-    val uiState: LiveData<QuestionListUiState> get() = uiStateLiveData
+    val uiState: LiveData<SearchUiState> get() = uiStateLiveData
 
     private val questionMapper by lazy { QuestionMapper() }
     private val tagMapper by lazy { TagMapper() }
-
-    suspend fun postTags(query: String, entities: List<TagEntity>) {
-        uiStateLiveData.postValue(
-            forwardState(tags = TagUiState(query = query, tags = entities))
-        )
-    }
 
     suspend fun postQuestions(schemas: List<QuestionSchema>) {
         val items = schemas.map { questionMapper.convert(it) }
         uiStateLiveData.postValue(
             forwardState(questions = items)
+        )
+    }
+
+    suspend fun postTags(schemas: List<TagSchema>) {
+        val items = schemas.map { tagMapper.convert(it) }
+        uiStateLiveData.postValue(
+            forwardState(tags = items)
         )
     }
 
@@ -52,10 +53,9 @@ class QuestionListUiStateLiveData(
         postLoadMore(message = str, isRetry = true)
     }
 
-    fun postPullToRefreshError(th: Throwable) {
-        val state = uiState.value ?: QuestionListUiState()
+    fun postScreenError(th: Throwable) {
         uiStateLiveData.postValue(
-            state.copy(loading = EventValue(emptyList()), error = EventValue(th))
+            forwardState(error = th)
         )
     }
 
@@ -82,9 +82,9 @@ class QuestionListUiStateLiveData(
         loading: LoadingState? = null,
         error: Throwable? = null,
         questions: List<Question>? = uiState.value?.questions,
-        tags: TagUiState? = uiState.value?.tags,
-    ): QuestionListUiState {
-        val state = uiState.value ?: QuestionListUiState()
+        tags: List<TagEntity>? = uiState.value?.tags,
+    ): SearchUiState {
+        val state = uiState.value ?: SearchUiState()
         val loadingStates: List<LoadingState> = loading?.let { listOf(it) } ?: emptyList()
 
         return state.copy(

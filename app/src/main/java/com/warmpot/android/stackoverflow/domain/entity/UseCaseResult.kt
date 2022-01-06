@@ -1,4 +1,4 @@
-package com.warmpot.android.stackoverflow.domain.usecase
+package com.warmpot.android.stackoverflow.domain.entity
 
 
 abstract class UseCaseResult<T> {
